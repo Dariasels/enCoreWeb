@@ -1,0 +1,80 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>enCore – Skiing</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<div class="login-widget" id="authWidget">
+  <img id="userImg" src="" hidden>
+  <span id="userName"></span>
+  <button id="loginOutBtn">Login</button>
+</div>
+
+<script type="module">
+  import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+  import { auth } from "./js/firebase-config.js";
+
+  const widget = document.getElementById('authWidget');
+  const img    = document.getElementById('userImg');
+  const name   = document.getElementById('userName');
+  const btn    = document.getElementById('loginOutBtn');
+
+  onAuthStateChanged(auth, user=>{
+    if(user){
+      img.src=user.photoURL; img.hidden=false;
+      name.textContent=user.displayName.split(' ')[0];
+      btn.textContent='Logout';
+    }else{
+      img.hidden=true; name.textContent='';
+      btn.textContent='Login';
+    }
+  });
+  btn.onclick = () => auth.currentUser ? signOut(auth) : location='login.html';
+</script>
+
+<body>
+  <header id="main-header">
+    <h1>enCore</h1>
+    <p>Sharing core memories around the world</p>
+    <p>by Daria S</p>
+    <nav>
+      <a href="index.html">Home&nbsp;&nbsp;<i class="fa-solid fa-cloud"></i></a>
+      <a href="running.html">Running</a>
+      <a href="hiking.html">Hiking</a>
+      <a href="backpacking.html">Backpacking</a>
+      <a href="diving.html">Diving</a>
+      <a href="skiing.html">Skiing</a>
+      <a href="food.html">Food</a>
+      <a href="suggestions.html">Suggestions</a>
+      <a href="inspiration.html">Inspiration</a>
+      <a href="past.html">Past Trips</a>
+    </nav>
+  </header>
+
+  <main class="content">
+    <h2>Skiing Trips</h2>
+    <p>From hut-to-hut in the Alps to powder mornings in Hokkaido – if it has snow and gravity, we’re in.</p>
+
+    <!-- same 3-section layout as running.html -->
+    <section id="ski-past"><h3>Past</h3></section>
+    <section id="ski-confirmed"><h3>Confirmed</h3></section>
+    <section id="ski-radar"><h3>On the Radar</h3></section>
+  </main>
+
+  <!-- pull shared logic -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ski-manager.js"></script>
+
+  <script type="module">
+  import { EventRenderer } from './js/event-renderer.js';
+  new EventRenderer('confirmed','confirmed','skiing');
+  new EventRenderer('radar',   'radar',   'skiing');
+  new EventRenderer('past',    'past',    'skiing');
+</script>
+</body>
+</html>

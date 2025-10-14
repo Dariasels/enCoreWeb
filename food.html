@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>enCore - Food</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<div class="login-widget" id="authWidget">
+  <img id="userImg" src="" hidden>
+  <span id="userName"></span>
+  <button id="loginOutBtn">Login</button>
+</div>
+
+<script type="module">
+  import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+  import { auth } from "./js/firebase-config.js";
+
+  const widget = document.getElementById('authWidget');
+  const img    = document.getElementById('userImg');
+  const name   = document.getElementById('userName');
+  const btn    = document.getElementById('loginOutBtn');
+
+  onAuthStateChanged(auth, user=>{
+    if(user){
+      img.src=user.photoURL; img.hidden=false;
+      name.textContent=user.displayName.split(' ')[0];
+      btn.textContent='Logout';
+    }else{
+      img.hidden=true; name.textContent='';
+      btn.textContent='Login';
+    }
+  });
+  btn.onclick = () => auth.currentUser ? signOut(auth) : location='login.html';
+</script>
+
+<body>
+  <header id="main-header">
+    <h1>enCore</h1>
+    <p>Sharing core memories around the world</p>
+    <p>by Daria S</p>
+  
+  
+      <nav>
+        <a href="index.html">Home&nbsp;&nbsp;<i class="fa-solid fa-cloud"></i></a>
+        <a href="running.html">Running</a>
+        <a href="hiking.html">Hiking</a>
+        <a href="backpacking.html">Backpacking</a>
+        <a href="diving.html">Diving</a>
+        <a href="ski.html">Skiing</a>
+        <a href="food.html">Food</a>
+        <a href="suggestions.html">Suggestions</a>
+        <a href="inspiration.html">Inspiration</a>
+        <a href="past.html">Past Trips</a>
+      </nav>
+  </header>
+  <main class="content">
+    <h2>Food Trips</h2>
+    <p>'m not going to lie, many of the trips I partake in are about food. So yes, on these trips here, we'll just eat good food, take up the culture, and relax.</p>
+  </main>
+</body>
+</html>
