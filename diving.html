@@ -9,7 +9,7 @@
 
 </head>
 
-<div class="login-widget" id="authWidget">
+<!-- <div class="login-widget" id="authWidget">
   <img id="userImg" src="" hidden>
   <span id="userName"></span>
   <button id="loginOutBtn">Login</button>
@@ -35,8 +35,11 @@
     }
   });
   btn.onclick = () => auth.currentUser ? signOut(auth) : location='login.html';
-</script>
-
+</script> -->
+  <script type="module">
+    import { injectLoginWidget } from './js/login-widget.js';
+    injectLoginWidget();   // creates ONE widget at runtime
+  </script>
 <body>
   <header id="main-header">
     <h1>enCore</h1>

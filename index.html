@@ -9,7 +9,7 @@
 
 </head>
 
-<div class="login-widget" id="authWidget">
+<!-- <div class="login-widget" id="authWidget">
   <img id="userImg" src="" hidden>
   <span id="userName"></span>
   <button id="loginOutBtn">Login</button>
@@ -35,8 +35,11 @@
     }
   });
   btn.onclick = () => auth.currentUser ? signOut(auth) : location='login.html';
-</script>
-
+</script> -->
+  <script type="module">
+    import { injectLoginWidget } from './js/login-widget.js';
+    injectLoginWidget();   // creates ONE widget at runtime
+  </script>
 <body class="home-page">
   <header id="main-header"class="home-header">
     <h1>enCore</h1>
@@ -61,13 +64,32 @@
   </div>
   <main class="home-main">
     <section>
-      <h2>Hi! If you're reading this you probably know who I am. I am that crazy girl who never stops thinking about going on crazy adventures, and so you probably met me on on eof them. "explanation of the website and where the inspiration/ story came from"
-        If you see anything that you like, please let me know. Then, let's embrark on this adventure together!
+      <h2>
+        Hi! If you're reading this you probably know who I am.         
+        I am that random girl who never stops thinking about leaving Belgium :) (That probably explains why you met me in a different country:) 
+        
+        This website is an accumulation of many of my passions, inspirations, and plans.It's both a technical project to me (to learn to code, host, and manage a website), as well as a life-long personal project to organize my travel ideas and share them with friends.
+        
+        I intend to live life the fullest with the poeple I care about, that drive me and that want to explore the world together.
+
+        Here you'll find different types of trips that I want to organize, share, and experience with you.
+        Each trip page contains more information about the trip type, and allows you to sign up so that you can stay up to date with the latest plans.
+        In either case, once you sign up, you will be notified about a new event.
+        If you see anything that you like, please hit the 'I'm in' button and get notified about your event. 
+        Then, let's embrark on this adventure together!
+
+        This project is constantly evolving, so feel free to give me feeback at anytime.
+        Also, if you have any trip ideas, please post them on the 'Suggestions' page.
+        And, if you have tips about a certain topic (like 'whats the best running gel', 'in which month should you visit the salt lakes in bolivia', or ' how do I train for a marathon'), please share them on the 'Inspiration' page, so that I can put them online.
+
+        There's only one rule, be part of the community once you sign up, and let's make core memories together!
+
       </h2>
       <h2>
         <a href="running.html">Running Trips</a>
       </h2>
-      <p>Let's run the world together!!!</p>
+      <p> Main goal at the moment: Let's run the world together!!! From the Pyramids of Egypt to the Great Wall of China, let's see these places without tourists:)
+        Come with us to run half marathons around the world. </p>
     </section>
     <section>
       <h2>
@@ -80,14 +102,17 @@
       <h2>
         <a href="backpacking.html">Backpacking Trips</a>
       </h2>
-      <p>I will for sure do a couple of multi-month backpack trips during my lifetime. I want to post them here and allow friends to join me on parts of the trip.</p>
+      <p>I will for sure do a couple of multi-month backpack trips during my lifetime. I want to post them here and allow friends to join me on parts of the trip.
+        If you plan to go backpacking for a couple of months, feel free to post in online if you want people to join certain parts!
+      </p>
     </section>
 
     <section>
       <h2>
         <a href="diving.html">Diving Trips</a>
       </h2>
-      <p>It speaks for itself that since our diving community is expanding, diving adventures will become an amazing thing to share among friends.</p>
+      <p>It speaks for itself that since our diving community is expanding, diving adventures will become an amazing thing to share among friends. 
+        (For example combine diving in egypt with the half marathon next to the pyramids, or skiing in japan, and then flying to an island to dive" -- everything is possible)</p>
     </section>
 
     <section>
@@ -120,7 +145,9 @@
 
 
     <section>
+
       <h2>Contact</h2>
+
       <p>Feel free to reach out to me if you want to join a trip,
         or if you have any questions, suggestions, or just want to chat about travel.
       </p>
@@ -131,9 +158,11 @@
       <p> +32489436738 </p>
      
     </section>
-
+    
   </main>
+
 </body>
+
 </html>
 
 

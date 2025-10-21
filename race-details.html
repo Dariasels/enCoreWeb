@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Race Details - enCore</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .race-detail-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .race-hero-image {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+    }
+
+    .race-content {
+      padding: 2rem;
+    }
+
+    .race-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 2rem;
+    }
+
+    .race-header h1 {
+      margin: 0;
+      color: #333;
+      font-size: 2rem;
+    }
+
+    .race-status {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .status-confirmed {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .status-radar {
+      background: #ffa500;
+      color: white;
+    }
+
+    .race-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .info-item i {
+      font-size: 1.5rem;
+      color: #ff6b35;
+    }
+
+    .info-item div {
+      flex: 1;
+    }
+
+    .info-label {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .join-section {
+      background: #f9f9f9;
+      padding: 2rem;
+      border-radius: 8px;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .join-section h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .join-button {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 1rem 3rem;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .join-button:hover {
+      background: #e55a2b;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    }
+
+    .join-button.joined {
+      background: #4CAF50;
+    }
+
+    .join-button.joined:hover {
+      background: #45a049;
+    }
+
+    .runners-section {
+      margin: 2rem 0;
+    }
+
+    .runners-section h3 {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .runners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .runner-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 8px;
+      transition: transform 0.2s;
+    }
+
+    .runner-card:hover {
+      transform: translateY(-4px);
+      background: #f0f0f0;
+    }
+
+    .runner-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-bottom: 0.5rem;
+      border: 3px solid #ff6b35;
+    }
+
+    .runner-name {
+      font-size: 0.9rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .chat-section {
+      margin: 2rem 0;
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .chat-section h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .chat-messages {
+      max-height: 300px;
+      overflow-y: auto;
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .chat-message {
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: #f0f0f0;
+      border-radius: 8px;
+    }
+
+    .chat-message-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .chat-message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .chat-message-name {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .chat-message-time {
+      font-size: 0.8rem;
+      color: #666;
+      margin-left: auto;
+    }
+
+    .chat-message-text {
+      color: #333;
+      line-height: 1.4;
+    }
+
+    .chat-input-container {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: #ff6b35;
+    }
+
+    .chat-send-btn {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .chat-send-btn:hover {
+      background: #e55a2b;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ff6b35;
+      text-decoration: none;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .external-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #2196F3;
+      color: white;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      transition: background 0.2s;
+    }
+
+    .external-link-btn:hover {
+      background: #1976D2;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <div class="login-widget" id="authWidget">
+    <a href="my-runs.html" id="profileLink" style="display:none;">
+      <img id="userImg" src="" style="width:32px;height:32px;border-radius:50%;cursor:pointer;" title="My Profile">
+    </a>
+    <span id="userName"></span>
+    <button id="loginOutBtn">Login</button>
+  </div> -->
+  <script type="module">
+    import { injectLoginWidget } from './js/login-widget.js';
+    injectLoginWidget();   // creates ONE widget at runtime
+  </script>
+
+  <script type="module">
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { auth } from "./js/firebase-config.js";
+
+    const profileLink = document.getElementById('profileLink');
+    const img = document.getElementById('userImg');
+    const name = document.getElementById('userName');
+    const btn = document.getElementById('loginOutBtn');
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        img.src = user.photoURL;
+        profileLink.style.display = 'block';
+        name.textContent = user.displayName?.split(' ')[0];
+        btn.textContent = 'Logout';
+      } else {
+        profileLink.style.display = 'none';
+        name.textContent = '';
+        btn.textContent = 'Login';
+      }
+    });
+
+    btn.onclick = () => auth.currentUser ? signOut(auth) : location = 'login.html';
+  </script>
+
+  <header id="main-header">
+    <h1>enCore</h1>
+    <p>Sharing core memories around the world</p>
+    <p>by Daria S</p>
+    <nav>
+      <a href="index.html">Home&nbsp;&nbsp;<i class="fa-solid fa-cloud"></i></a>
+      <a href="running.html">Running</a>
+      
+      <a href="hiking.html">Hiking</a>
+      <a href="backpacking.html">Backpacking</a>
+      <a href="diving.html">Diving</a>
+      <a href="ski.html">Skiing</a>
+      <a href="food.html">Food</a>
+      <a href="suggestions.html">Suggestions</a>
+      <a href="inspiration.html">Inspiration</a>
+      <a href="past.html">Past Trips</a>
+    </nav>
+  </header>
+
+  <main class="content">
+    <a href="running.html" class="back-link">
+      <i class="fa-solid fa-arrow-left"></i> Back to Running
+    </a>
+
+    <div class="race-detail-container">
+      <img id="raceImage" class="race-hero-image" src="" alt="">
+      
+      <div class="race-content">
+        <div class="race-header">
+          <h1 id="raceName"></h1>
+          <span id="raceStatus" class="race-status"></span>
+        </div>
+
+        <div class="race-info-grid">
+          <div class="info-item">
+            <i class="fa-regular fa-calendar"></i>
+            <div>
+              <div class="info-label">Date</div>
+              <div class="info-value" id="raceDate"></div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <div>
+              <div class="info-label">Location</div>
+              <div class="info-value" id="raceLocation"></div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <i class="fa-solid fa-users"></i>
+            <div>
+              <div class="info-label">Runners</div>
+              <div class="info-value"><span id="runnerCount">0</span> joined</div>
+            </div>
+          </div>
+        </div>
+
+        <a id="raceWebsite" href="#" target="_blank" class="external-link-btn">
+          <i class="fa-solid fa-external-link-alt"></i>
+          Official Race Website
+        </a>
+
+        <div class="join-section">
+          <h3>Ready to run?</h3>
+          <button id="joinButton" class="join-button">
+            <i class="fa-solid fa-running"></i>
+            <span id="joinButtonText">I'm in!</span>
+          </button>
+        </div>
+
+        <div class="runners-section">
+          <h3><i class="fa-solid fa-users"></i> Who's Running</h3>
+          <div id="runnersList" class="runners-grid">
+            <p style="color: #666;">No runners yet. Be the first to join!</p>
+          </div>
+        </div>
+
+        <div class="chat-section">
+          <h3><i class="fa-solid fa-comments"></i> Race Chat</h3>
+          <div id="chatMessages" class="chat-messages">
+            <p style="color: #666; text-align: center;">Start the conversation!</p>
+          </div>
+          <div class="chat-input-container">
+            <input 
+              type="text" 
+              id="chatInput" 
+              class="chat-input" 
+              placeholder="Type your message..."
+              disabled
+            >
+            <button id="chatSendBtn" class="chat-send-btn" disabled>
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="races-data.js"></script>
+  
+  <script type="module">
+    import { db, auth } from './js/firebase-config.js';
+    import { doc, updateDoc, arrayUnion, arrayRemove, onSnapshot, collection, addDoc, serverTimestamp, query, orderBy, getDoc, setDoc }
+    from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+    // Get race ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const raceId = urlParams.get('id');
+
+    console.log('Race ID from URL:', raceId);
+
+    if (!raceId) {
+      console.error('No race ID provided');
+      alert('No race ID provided. Redirecting...');
+      window.location.href = 'running.html';
+    }
+
+    // Load race data from hardcoded data
+    let currentRace = null;
+    
+    console.log('Available racesData:', racesData);
+    
+    const allRaces = [
+      ...racesData.confirmed,
+      ...racesData.radar,
+      ...racesData.past
+    ];
+
+    console.log('All races:', allRaces);
+
+    currentRace = allRaces.find(r => r.id === raceId);
+
+    console.log('Found race:', currentRace);
+
+    if (!currentRace) {
+      console.error('Race not found with ID:', raceId);
+      alert('Race not found. Redirecting...');
+      window.location.href = 'running.html';
+    }
+
+    // Display race info
+    document.getElementById('raceName').textContent = currentRace.name;
+    document.getElementById('raceDate').textContent = currentRace.date || 'TBD';
+    document.getElementById('raceLocation').textContent = currentRace.name.split(',').slice(-1)[0] || 'Location';
+    document.getElementById('raceImage').src = currentRace.image || 'pictures/placeholder.jpg';
+    document.getElementById('raceImage').alt = currentRace.name;
+    document.getElementById('raceWebsite').href = currentRace.url;
+    
+    const statusEl = document.getElementById('raceStatus');
+    statusEl.textContent = currentRace.status.charAt(0).toUpperCase() + currentRace.status.slice(1);
+    statusEl.className = `race-status status-${currentRace.status}`;
+
+    let currentUser = null;
+    let isJoined = false;
+
+    // Auth state handling
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      
+      if (user) {
+        // Enable chat
+        document.getElementById('chatInput').disabled = false;
+        document.getElementById('chatSendBtn').disabled = false;
+
+        // Check if user has joined and set up real-time listener
+        const raceDocRef = doc(db, 'events', raceId);
+        
+        try {
+          const raceDoc = await getDoc(raceDocRef);
+          
+          if (raceDoc.exists()) {
+            onSnapshot(raceDocRef, (snapshot) => {
+              const data = snapshot.data();
+              const going = data?.going || [];
+              isJoined = going.includes(user.uid);
+              
+              updateJoinButton();
+              updateRunnersList(going);
+            });
+          } else {
+            console.log('Race document will be created on first join');
+            isJoined = false;
+            updateJoinButton();
+            updateRunnersList([]);
+          }
+        } catch (error) {
+          console.error('Error checking race status:', error);
+          isJoined = false;
+          updateJoinButton();
+          updateRunnersList([]);
+        }
+
+        setupChatListener(raceId);
+      } else {
+        document.getElementById('chatInput').disabled = true;
+        document.getElementById('chatSendBtn').disabled = true;
+        document.getElementById('chatInput').placeholder = 'Login to chat';
+      }
+    });
+
+    function updateJoinButton() {
+      const joinBtn = document.getElementById('joinButton');
+      const joinBtnText = document.getElementById('joinButtonText');
+      
+      if (!currentUser) {
+        joinBtnText.textContent = 'Login to Join';
+        joinBtn.onclick = () => window.location.href = 'login.html';
+        return;
+      }
+
+      if (isJoined) {
+        joinBtn.classList.add('joined');
+        joinBtnText.textContent = 'You\'re in! (Click to leave)';
+      } else {
+        joinBtn.classList.remove('joined');
+        joinBtnText.textContent = 'I\'m in!';
+      }
+    }
+
+    document.getElementById('joinButton').addEventListener('click', async () => {
+      if (!currentUser) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const raceDocRef = doc(db, 'events', raceId);
+      const joinBtn = document.getElementById('joinButton');
+      joinBtn.disabled = true;
+      joinBtn.style.opacity = '0.6';
+
+      try {
+        const raceDoc = await getDoc(raceDocRef);
+        
+        if (!raceDoc.exists()) {
+          console.log('Creating new race document in Firestore...');
+          await setDoc(raceDocRef, {
+            id: currentRace.id,
+            name: currentRace.name,
+            date: currentRace.date || '',
+            location: currentRace.location || { lat: 0, lng: 0 },
+            url: currentRace.url || '',
+            image: currentRace.image || '',
+            sport: 'running',
+            status: currentRace.status,
+            going: [currentUser.uid]
+          });
+          console.log('Race document created successfully!');
+        } else {
+          console.log('Updating existing race document...');
+          if (isJoined) {
+            await updateDoc(raceDocRef, {
+              going: arrayRemove(currentUser.uid)
+            });
+            console.log('Left race successfully!');
+          } else {
+            await updateDoc(raceDocRef, {
+              going: arrayUnion(currentUser.uid)
+            });
+            console.log('Joined race successfully!');
+          }
+        }
+      } catch (error) {
+        console.error('Error updating race:', error);
+        console.error('Error details:', error.message);
+        alert('Error updating race: ' + error.message);
+      } finally {
+        joinBtn.disabled = false;
+        joinBtn.style.opacity = '1';
+      }
+    });
+
+    async function updateRunnersList(uids) {
+      const runnersList = document.getElementById('runnersList');
+      const runnerCount = document.getElementById('runnerCount');
+      
+      runnerCount.textContent = uids.length;
+
+      if (uids.length === 0) {
+        runnersList.innerHTML = '<p style="color: #666;">No runners yet. Be the first to join!</p>';
+        return;
+      }
+
+      runnersList.innerHTML = '';
+      
+      for (const uid of uids) {
+        const runnerCard = document.createElement('div');
+        runnerCard.className = 'runner-card';
+        
+        try {
+          const userDocRef = doc(db, 'users', uid);
+          const userDoc = await getDoc(userDocRef);
+          
+          let displayName = 'Runner';
+          let photoURL = `https://robohash.org/${uid}?size=60x60`;
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            displayName = userData.displayName || userData.name || 'Runner';
+            photoURL = userData.photoURL || photoURL;
+          } else if (uid === currentUser?.uid) {
+            displayName = currentUser.displayName?.split(' ')[0] || 'You';
+            photoURL = currentUser.photoURL || photoURL;
+          }
+          
+          runnerCard.innerHTML = `
+            <img src="${photoURL}" class="runner-avatar" alt="${displayName}" onerror="this.src='https://robohash.org/${uid}?size=60x60'">
+            <div class="runner-name">${displayName}</div>
+          `;
+        } catch (error) {
+          console.log('Could not fetch user data for', uid);
+          runnerCard.innerHTML = `
+            <img src="https://robohash.org/${uid}?size=60x60" class="runner-avatar" alt="Runner">
+            <div class="runner-name">Runner ${uid.substring(0, 6)}</div>
+          `;
+        }
+        
+        runnersList.appendChild(runnerCard);
+      }
+    }
+
+    function setupChatListener(raceId) {
+      const chatMessages = document.getElementById('chatMessages');
+      const q = query(collection(db, 'events', raceId, 'chats'), orderBy('ts'));
+      
+      onSnapshot(q, (snapshot) => {
+        if (snapshot.empty) {
+          chatMessages.innerHTML = '<p style="color: #666; text-align: center;">Start the conversation!</p>';
+          return;
+        }
+
+        chatMessages.innerHTML = '';
+        snapshot.forEach((doc) => {
+          const msg = doc.data();
+          const time = msg.ts?.toDate ? msg.ts.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+          const displayName = msg.name || 'Runner';
+          const photoURL = msg.photoURL || `https://robohash.org/${msg.uid}?size=32x32`;
+          
+          chatMessages.innerHTML += `
+            <div class="chat-message">
+              <div class="chat-message-header">
+                <img src="${photoURL}" class="chat-message-avatar" alt="${displayName}" onerror="this.src='https://robohash.org/${msg.uid}?size=32x32'">
+                <span class="chat-message-name">${displayName}</span>
+                <span class="chat-message-time">${time}</span>
+              </div>
+              <div class="chat-message-text">${msg.text}</div>
+            </div>
+          `;
+        });
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+    }
+
+    async function sendMessage() {
+      if (!currentUser) return;
+
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      
+      if (!text) return;
+
+      try {
+        await addDoc(collection(db, 'events', raceId, 'chats'), {
+          uid: currentUser.uid,
+          name: currentUser.displayName?.split(' ')[0] || 'Runner',
+          photoURL: currentUser.photoURL || null,
+          text: text,
+          ts: serverTimestamp()
+        });
+
+        input.value = '';
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
+    }
+
+    document.getElementById('chatSendBtn').addEventListener('click', sendMessage);
+    document.getElementById('chatInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Race Details - enCore</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .race-detail-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .race-hero-image {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+    }
+
+    .race-content {
+      padding: 2rem;
+    }
+
+    .race-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 2rem;
+    }
+
+    .race-header h1 {
+      margin: 0;
+      color: #333;
+      font-size: 2rem;
+    }
+
+    .race-status {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .status-confirmed {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .status-radar {
+      background: #ffa500;
+      color: white;
+    }
+
+    .race-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .info-item i {
+      font-size: 1.5rem;
+      color: #ff6b35;
+    }
+
+    .info-item div {
+      flex: 1;
+    }
+
+    .info-label {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .join-section {
+      background: #f9f9f9;
+      padding: 2rem;
+      border-radius: 8px;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .join-section h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .join-button {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 1rem 3rem;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .join-button:hover {
+      background: #e55a2b;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    }
+
+    .join-button.joined {
+      background: #4CAF50;
+    }
+
+    .join-button.joined:hover {
+      background: #45a049;
+    }
+
+    .runners-section {
+      margin: 2rem 0;
+    }
+
+    .runners-section h3 {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .runners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .runner-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 8px;
+      transition: transform 0.2s;
+    }
+
+    .runner-card:hover {
+      transform: translateY(-4px);
+      background: #f0f0f0;
+    }
+
+    .runner-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-bottom: 0.5rem;
+      border: 3px solid #ff6b35;
+    }
+
+    .runner-name {
+      font-size: 0.9rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .chat-section {
+      margin: 2rem 0;
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .chat-section h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .chat-messages {
+      max-height: 300px;
+      overflow-y: auto;
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .chat-message {
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: #f0f0f0;
+      border-radius: 8px;
+    }
+
+    .chat-message-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .chat-message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .chat-message-name {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .chat-message-time {
+      font-size: 0.8rem;
+      color: #666;
+      margin-left: auto;
+    }
+
+    .chat-message-text {
+      color: #333;
+      line-height: 1.4;
+    }
+
+    .chat-input-container {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: #ff6b35;
+    }
+
+    .chat-send-btn {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .chat-send-btn:hover {
+      background: #e55a2b;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ff6b35;
+      text-decoration: none;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .external-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #2196F3;
+      color: white;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      transition: background 0.2s;
+    }
+
+    .external-link-btn:hover {
+      background: #1976D2;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <div class="login-widget" id="authWidget">
+    <img id="userImg" src="" hidden>
+    <span id="userName"></span>
+    <button id="loginOutBtn">Login</button>
+  </div>
+
+  <script type="module">
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { auth } from "./js/firebase-config.js";
+
+    const widget = document.getElementById('authWidget');
+    const img = document.getElementById('userImg');
+    const name = document.getElementById('userName');
+    const btn = document.getElementById('loginOutBtn');
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        img.src = user.photoURL;
+        img.hidden = false;
+        name.textContent = user.displayName.split(' ')[0];
+        btn.textContent = 'Logout';
+      } else {
+        img.hidden = true;
+        name.textContent = '';
+        btn.textContent = 'Login';
+      }
+    });
+
+    btn.onclick = () => auth.currentUser ? signOut(auth) : location = 'login.html';
+  </script> -->
+<!-- 
+  <header id="main-header">
+    <h1>enCore</h1>
+    <p>Sharing core memories around the world</p>
+    <p>by Daria S</p>
+    <nav>
+      <a href="index.html">Home&nbsp;&nbsp;<i class="fa-solid fa-cloud"></i></a>
+      <a href="running.html">Running</a>
+      <a href="hiking.html">Hiking</a>
+      <a href="backpacking.html">Backpacking</a>
+      <a href="diving.html">Diving</a>
+      <a href="ski.html">Skiing</a>
+      <a href="food.html">Food</a>
+      <a href="suggestions.html">Suggestions</a>
+      <a href="inspiration.html">Inspiration</a>
+      <a href="past.html">Past Trips</a>
+    </nav>
+  </header>
+
+  <main class="content">
+    <a href="running.html" class="back-link">
+      <i class="fa-solid fa-arrow-left"></i> Back to Running
+    </a>
+
+    <div class="race-detail-container">
+      <img id="raceImage" class="race-hero-image" src="" alt="">
+      
+      <div class="race-content">
+        <div class="race-header">
+          <h1 id="raceName"></h1>
+          <span id="raceStatus" class="race-status"></span>
+        </div>
+
+        <div class="race-info-grid">
+          <div class="info-item">
+            <i class="fa-regular fa-calendar"></i>
+            <div>
+              <div class="info-label">Date</div>
+              <div class="info-value" id="raceDate"></div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <div>
+              <div class="info-label">Location</div>
+              <div class="info-value" id="raceLocation"></div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <i class="fa-solid fa-users"></i>
+            <div>
+              <div class="info-label">Runners</div>
+              <div class="info-value"><span id="runnerCount">0</span> joined</div>
+            </div>
+          </div>
+        </div>
+
+        <a id="raceWebsite" href="#" target="_blank" class="external-link-btn">
+          <i class="fa-solid fa-external-link-alt"></i>
+          Official Race Website
+        </a>
+
+        <div class="join-section">
+          <h3>Ready to run?</h3>
+          <button id="joinButton" class="join-button">
+            <i class="fa-solid fa-running"></i>
+            <span id="joinButtonText">I'm in!</span>
+          </button>
+        </div>
+
+        <div class="runners-section">
+          <h3><i class="fa-solid fa-users"></i> Who's Running</h3>
+          <div id="runnersList" class="runners-grid">
+            <p style="color: #666;">No runners yet. Be the first to join!</p>
+          </div>
+        </div>
+
+        <div class="chat-section">
+          <h3><i class="fa-solid fa-comments"></i> Race Chat</h3>
+          <div id="chatMessages" class="chat-messages">
+            <p style="color: #666; text-align: center;">Start the conversation!</p>
+          </div>
+          <div class="chat-input-container">
+            <input 
+              type="text" 
+              id="chatInput" 
+              class="chat-input" 
+              placeholder="Type your message..."
+              disabled
+            >
+            <button id="chatSendBtn" class="chat-send-btn" disabled>
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main> -->
+  <script type="module">
+    import { injectLoginWidget } from './js/login-widget.js';
+    injectLoginWidget();   // creates ONE widget at runtime
+  </script>
+</body>
+</html>

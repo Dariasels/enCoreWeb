@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Profile - enCore</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .edit-container {
+      max-width: 600px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #ff6b35;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: normal;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .btn-save {
+      background: #ff6b35;
+      color: white;
+    }
+
+    .btn-save:hover {
+      background: #e55a2b;
+    }
+
+    .btn-cancel {
+      background: #ddd;
+      color: #333;
+    }
+
+    .btn-cancel:hover {
+      background: #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <div class="login-widget" id="authWidget">
+    <img id="userImg" src="" hidden>
+    <span id="userName"></span>
+    <button id="loginOutBtn">Login</button>
+  </div>
+
+  <script type="module">
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { auth } from "./js/firebase-config.js";
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        document.getElementById('userImg').src = user.photoURL;
+        document.getElementById('userImg').hidden = false;
+        document.getElementById('userName').textContent = user.displayName?.split(' ')[0];
+        document.getElementById('loginOutBtn').textContent = 'Logout';
+      }
+    });
+
+    document.getElementById('loginOutBtn').onclick = () => 
+      auth.currentUser ? signOut(auth) : location = 'login.html';
+  </script> -->
+  <script type="module">
+    import { injectLoginWidget } from './js/login-widget.js';
+    injectLoginWidget();   // creates ONE widget at runtime
+  </script>
+  <header id="main-header">
+    <h1>enCore</h1>
+    <p>Sharing core memories around the world</p>
+    <p>by Daria S</p>
+    <nav>
+      <a href="index.html">Home&nbsp;&nbsp;<i class="fa-solid fa-cloud"></i></a>
+      <a href="running.html">Running</a>
+      <a href="my-runs.html">My Runs</a>
+    </nav>
+  </header>
+
+  <main class="content">
+    <div class="edit-container">
+      <h2>Edit Profile</h2>
+
+      <form id="editForm">
+        <div class="form-group">
+          <label for="displayName">Display Name</label>
+          <input type="text" id="displayName" name="displayName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="bio">Bio</label>
+          <textarea id="bio" name="bio" rows="3" maxlength="200"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location">
+        </div>
+
+        <div class="form-group">
+          <label>Email Notifications</label>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="emailRaceReminders" name="emailRaceReminders">
+            <label for="emailRaceReminders">Race reminders (7 days before)</label>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="emailNewRunners" name="emailNewRunners">
+            <label for="emailNewRunners">When someone joins my races</label>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="emailChatMessages" name="emailChatMessages">
+            <label for="emailChatMessages">Chat messages</label>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn btn-cancel" onclick="history.back()">Cancel</button>
+          <button type="submit" class="btn btn-save">Save Changes</button>
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="emailNewEvents" name="emailNewEvents" checked>
+          <label for="emailNewEvents">E-mail me when new races are posted</label>
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="emailSubReminder" name="emailSubReminder" checked>
+          <label for="emailSubReminder">E-mail me before subscription deadlines</label>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <script type="module">
+    import { auth, db } from './js/firebase-config.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    import { doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
+    let currentUser = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      currentUser = user;
+
+      // Load current profile
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists()) {
+        const profile = userDoc.data();
+        document.getElementById('displayName').value = profile.displayName || '';
+        document.getElementById('bio').value = profile.bio || '';
+        document.getElementById('location').value = profile.location || '';
+        document.getElementById('emailRaceReminders').checked = profile.notifications?.raceReminders || false;
+        document.getElementById('emailNewRunners').checked = profile.notifications?.newRunners || false;
+        document.getElementById('emailChatMessages').checked = profile.notifications?.chatMessages || false;
+      }
+    });
+
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const updates = {
+        displayName: document.getElementById('displayName').value.trim(),
+        bio: document.getElementById('bio').value.trim(),
+        location: document.getElementById('location').value.trim(),
+        notifications: {
+          raceReminders: document.getElementById('emailRaceReminders').checked,
+          newRunners: document.getElementById('emailNewRunners').checked,
+          chatMessages: document.getElementById('emailChatMessages').checked,
+          newEvents: document.getElementById('emailNewEvents').checked,
+          subscriptionReminder: document.getElementById('emailSubReminder').checked
+        },
+        updatedAt: new Date().toISOString()
+      };
+
+      try {
+        await updateDoc(doc(db, 'users', currentUser.uid), updates);
+        alert('Profile updated successfully!');
+        window.location.href = 'my-runs.html';
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Error updating profile. Please try again.');
+      }
+    });
+  </script>
+</body>
+</html>

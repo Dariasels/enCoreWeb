@@ -1,0 +1,245 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Race Details - enCore</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .race-detail-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .race-hero-image {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+    }
+
+    .race-content {
+      padding: 2rem;
+    }
+
+    .race-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 2rem;
+    }
+
+    .race-header h1 {
+      margin: 0;
+      color: #333;
+      font-size: 2rem;
+    }
+
+    .race-status {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .status-confirmed {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .status-radar {
+      background: #ffa500;
+      color: white;
+    }
+
+    .race-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .info-item i {
+      font-size: 1.5rem;
+      color: #ff6b35;
+    }
+
+    .info-item div {
+      flex: 1;
+    }
+
+    .info-label {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .join-section {
+      background: #f9f9f9;
+      padding: 2rem;
+      border-radius: 8px;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .join-section h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .join-button {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 1rem 3rem;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .join-button:hover {
+      background: #e55a2b;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    }
+
+    .join-button.joined {
+      background: #4CAF50;
+    }
+
+    .join-button.joined:hover {
+      background: #45a049;
+    }
+
+    .runners-section {
+      margin: 2rem 0;
+    }
+
+    .runners-section h3 {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .runners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .runner-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 8px;
+      transition: transform 0.2s;
+    }
+
+    .runner-card:hover {
+      transform: translateY(-4px);
+      background: #f0f0f0;
+    }
+
+    .runner-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-bottom: 0.5rem;
+      border: 3px solid #ff6b35;
+    }
+
+    .runner-name {
+      font-size: 0.9rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .chat-section {
+      margin: 2rem 0;
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .chat-section h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .chat-messages {
+      max-height: 300px;
+      overflow-y: auto;
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .chat-message {
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: #f0f0f0;
+      border-radius: 8px;
+    }
+
+    .chat-message-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .chat-message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .chat-message-name {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .chat-message-time {
+      font-size: 0.8rem;
+      color: #666;
+      margin-left: auto;
+    }
+
+    .chat-message-text {
+      color: #333;
+      line-height: 1.4;
+    }
+
+    .chat-input-container {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem; -->

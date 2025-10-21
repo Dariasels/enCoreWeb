@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile - enCore</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .profile-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 2rem;
+    }
+
+    .profile-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .profile-header {
+      display: flex;
+      gap: 2rem;
+      align-items: start;
+      margin-bottom: 2rem;
+    }
+
+    .avatar-section {
+      text-align: center;
+    }
+
+    .profile-avatar-large {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 4px solid #ff6b35;
+      object-fit: cover;
+      margin-bottom: 1rem;
+    }
+
+    .change-avatar-btn {
+      background: #2196F3;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .change-avatar-btn:hover {
+      background: #1976D2;
+    }
+
+    .profile-info {
+      flex: 1;
+    }
+
+    .profile-info h1 {
+      margin: 0 0 0.5rem 0;
+      color: #333;
+    }
+
+    .profile-username {
+      color: #666;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .profile-bio {
+      color: #666;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .profile-location {
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .edit-btn {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 1rem;
+    }
+
+    .edit-btn:hover {
+      background: #e55a2b;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      color: #ff6b35;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .section-title {
+      color: #333;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .races-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .race-card-small {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .race-card-small:hover {
+      transform: translateY(-4px);
+    }
+
+    .race-card-image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .race-card-body {
+      padding: 1rem;
+    }
+
+    .race-card-title {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .race-card-date {
+      color: #666;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .race-card-btn {
+      width: 100%;
+      padding: 0.5rem;
+      background: #ff6b35;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+
+    .race-card-btn:hover {
+      background: #e55a2b;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      color: #ddd;
+      margin-bottom: 1rem;
+    }
+
+    .browse-btn {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .browse-btn:hover {
+      background: #e55a2b;
+    }
+
+    /* Avatar picker modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-close {
+      font-size: 2rem;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .avatar-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .avatar-option {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .avatar-option:hover {
+      border-color: #ff6b35;
+      transform: scale(1.1);
+    }
+
+    .avatar-option.selected {
+      border-color: #4CAF50;
+      box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    }
+
+    .upload-section {
+      border-top: 2px solid #eee;
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .upload-btn {
+      background: #2196F3;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .upload-btn:hover {
+      background: #1976D2;
+    }
+
+    .save-avatar-btn {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    .save-avatar-btn:hover {
+      background: #45a049;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <div class="login-widget" id="authWidget">
+    <img id="userImg" src="" style="width:32px;height:32px;border-radius:50%;cursor:pointer;" title="My Profile">
+    <span id="userName"></span>
+    <button id="loginOutBtn">Logout</button>
+  </div>
+
+  <script type="module">
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { auth } from "./js/firebase-config.js";
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        document.getElementById('userImg').src = user.photoURL || `https://robohash.org/${user.uid}?size=32x32`;
+        document.getElementById('userName').textContent = user.displayName?.split(' ')[0];
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    document.getElementById('loginOutBtn').onclick = () => signOut(auth).then(() => location = 'login.html');
+  </script> -->
+    <script type="module">
+    import { injectLoginWidget } from './js/login-widget.js';
+    injectLoginWidget();   // creates ONE widget at runtime
+  </script>
+  <header id="main-header">
+    <h1>enCore</h1>
+    <p>Sharing core memories around the world</p>
+    <p>by Daria S</p>
+    <nav>
+      <a href="index.html">Home&nbsp;&nbsp;<i class="fa-solid fa-cloud"></i></a>
+      <a href="running.html">Running</a>
+      <a href="hiking.html">Hiking</a>
+      <a href="backpacking.html">Backpacking</a>
+      <a href="diving.html">Diving</a>
+      <a href="ski.html">Skiing</a>
+      <a href="food.html">Food</a>
+      <a href="suggestions.html">Suggestions</a>
+      <a href="inspiration.html">Inspiration</a>
+      <a href="past.html">Past Trips</a>
+    </nav>
+  </header>
+
+  <main class="content">
+    <div class="profile-container">
+      <!-- Profile Card -->
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="avatar-section">
+            <img id="profileAvatar" class="profile-avatar-large" src="" alt="Profile">
+            <button class="change-avatar-btn" id="changeAvatarBtn">
+              <i class="fa-solid fa-camera"></i> Change Avatar
+            </button>
+          </div>
+          
+          <div class="profile-info">
+            <h1 id="profileDisplayName">Loading...</h1>
+            <div class="profile-username" id="profileUsername">@username</div>
+            <div class="profile-bio" id="profileBio"></div>
+            <div class="profile-location" id="profileLocation"></div>
+            <a href="edit-profile.html" class="edit-btn">
+              <i class="fa-solid fa-edit"></i> Edit Profile
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-running"></i></div>
+          <div class="stat-value" id="statRaces">0</div>
+          <div class="stat-label">Races Joined</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-heart"></i></div>
+          <div class="stat-value" id="statLiked">0</div>
+          <div class="stat-label">Races Liked</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-value" id="statConnections">0</div>
+          <div class="stat-label">Running Buddies</div>
+        </div>
+      </div>
+
+      <!-- My Races -->
+      <h2 class="section-title">
+        <i class="fa-solid fa-calendar-check"></i> My Races
+      </h2>
+
+      <div id="racesContainer" class="races-grid"></div>
+
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <i class="fa-solid fa-calendar-xmark"></i>
+        <h3>No races yet</h3>
+        <p>Start your running journey by joining a race!</p>
+        <a href="running.html" class="browse-btn">Browse Races</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Avatar Picker Modal -->
+  <div id="avatarModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Choose Your Avatar</h2>
+        <span class="modal-close" id="closeModal">&times;</span>
+      </div>
+
+      <h3>Generated Avatars</h3>
+      <div class="avatar-options" id="avatarOptions"></div>
+
+      <div class="upload-section">
+        <h3>Or Upload Your Own</h3>
+        <input type="file" id="avatarUpload" accept="image/*" style="display:none;">
+        <button class="upload-btn" onclick="document.getElementById('avatarUpload').click()">
+          <i class="fa-solid fa-upload"></i> Upload Photo
+        </button>
+        <canvas id="avatarCanvas" style="display:none;"></canvas>
+      </div>
+
+      <button class="save-avatar-btn" id="saveAvatarBtn" style="margin-top:1.5rem;">
+        Save Avatar
+      </button>
+    </div>
+  </div>
+
+  <script src="races-data.js"></script>
+
+  <script type="module">
+    import { auth, db } from './js/firebase-config.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    import { doc, getDoc, collection, query, where, getDocs, updateDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
+    let currentUser = null;
+    let userProfile = null;
+    let myRaces = [];
+    let selectedAvatarUrl = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      currentUser = user;
+
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      
+      if (!userDoc.exists() || !userDoc.data().profileComplete) {
+        window.location.href = 'profile-setup.html';
+        return;
+      }
+
+      userProfile = userDoc.data();
+      displayProfile();
+      await loadMyRaces();
+      generateAvatarOptions();
+    });
+
+    function displayProfile() {
+      const avatarUrl = userProfile.photoURL || `https://robohash.org/${currentUser.uid}?size=150x150`;
+      document.getElementById('profileAvatar').src = avatarUrl;
+      document.getElementById('profileDisplayName').textContent = userProfile.displayName;
+      document.getElementById('profileUsername').textContent = `@${userProfile.username}`;
+      document.getElementById('profileBio').textContent = userProfile.bio || 'No bio yet';
+      
+      if (userProfile.location) {
+        document.getElementById('profileLocation').innerHTML = `
+          <i class="fa-solid fa-location-dot"></i> ${userProfile.location}
+        `;
+      }
+    }
+
+    async function loadMyRaces() {
+      try {
+        const eventsQuery = query(
+          collection(db, 'events'),
+          where('going', 'array-contains', currentUser.uid)
+        );
+        
+        const eventsSnapshot = await getDocs(eventsQuery);
+        myRaces = [];
+
+        eventsSnapshot.forEach((doc) => {
+          const eventData = doc.data();
+          const allRaces = [
+            ...racesData.confirmed,
+            ...racesData.radar,
+            ...racesData.past
+          ];
+          const raceInfo = allRaces.find(r => r.id === doc.id);
+          
+          if (raceInfo) {
+            myRaces.push({ ...raceInfo, ...eventData });
+          }
+        });
+
+        updateStats();
+        displayRaces();
+      } catch (error) {
+        console.error('Error loading races:', error);
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('statRaces').textContent = myRaces.length;
+      
+      const uniqueRunners = new Set();
+      myRaces.forEach(race => {
+        if (race.going) {
+          race.going.forEach(uid => {
+            if (uid !== currentUser.uid) uniqueRunners.add(uid);
+          });
+        }
+      });
+      document.getElementById('statConnections').textContent = uniqueRunners.size;
+
+      const userLikes = localStorage.getItem(`userLikes_${currentUser.uid}`);
+      const likedCount = userLikes ? JSON.parse(userLikes).length : 0;
+      document.getElementById('statLiked').textContent = likedCount;
+    }
+
+    function displayRaces() {
+      const container = document.getElementById('racesContainer');
+      const emptyState = document.getElementById('emptyState');
+
+      if (myRaces.length === 0) {
+        container.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      container.style.display = 'grid';
+      emptyState.style.display = 'none';
+
+      container.innerHTML = myRaces.map(race => `
+        <div class="race-card-small">
+          ${race.image ? `<img src="${race.image}" class="race-card-image" alt="${race.name}">` : ''}
+          <div class="race-card-body">
+            <div class="race-card-title">${race.name}</div>
+            <div class="race-card-date">
+              <i class="fa-regular fa-calendar"></i>
+              ${race.date || 'Date TBD'}
+            </div>
+            <a href="race-details.html?id=${race.id}" class="race-card-btn">
+              View Details
+            </a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Avatar picker
+    function generateAvatarOptions() {
+      const container = document.getElementById('avatarOptions');
+      const styles = ['adventurer', 'avataaars', 'bottts', 'fun-emoji', 'lorelei', 'micah', 'miniavs', 'open-peeps', 'personas', 'pixel-art'];
+      
+      container.innerHTML = styles.map(style => {
+        const url = `https://api.dicebear.com/7.x/${style}/svg?seed=${currentUser.uid}`;
+        return `<img src="${url}" class="avatar-option" data-url="${url}">`;
+      }).join('');
+
+      // Add click handlers
+      document.querySelectorAll('.avatar-option').forEach(img => {
+        img.addEventListener('click', function() {
+          document.querySelectorAll('.avatar-option').forEach(i => i.classList.remove('selected'));
+          this.classList.add('selected');
+          selectedAvatarUrl = this.dataset.url;
+        });
+      });
+    }
+
+    // Show modal
+    document.getElementById('changeAvatarBtn').addEventListener('click', () => {
+      document.getElementById('avatarModal').style.display = 'block';
+      selectedAvatarUrl = userProfile.photoURL;
+    });
+
+    // Close modal
+    document.getElementById('closeModal').addEventListener('click', () => {
+      document.getElementById('avatarModal').style.display = 'none';
+    });
+
+    // Upload custom photo
+    document.getElementById('avatarUpload').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.getElementById('avatarCanvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = 150;
+          canvas.height = 150;
+
+          const size = Math.min(img.width, img.height);
+          const x = (img.width - size) / 2;
+          const y = (img.height - size) / 2;
+
+          ctx.drawImage(img, x, y, size, size, 0, 0, 150, 150);
+          selectedAvatarUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+          document.querySelectorAll('.avatar-option').forEach(i => i.classList.remove('selected'));
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Save avatar
+    document.getElementById('saveAvatarBtn').addEventListener('click', async () => {
+      if (!selectedAvatarUrl) {
+        alert('Please select an avatar first!');
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          photoURL: selectedAvatarUrl
+        });
+
+        userProfile.photoURL = selectedAvatarUrl;
+        document.getElementById('profileAvatar').src = selectedAvatarUrl;
+        document.getElementById('userImg').src = selectedAvatarUrl;
+        document.getElementById('avatarModal').style.display = 'none';
+
+        alert('Avatar updated successfully!');
+      } catch (error) {
+        console.error('Error updating avatar:', error);
+        alert('Error updating avatar. Please try again.');
+      }
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('avatarModal');
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

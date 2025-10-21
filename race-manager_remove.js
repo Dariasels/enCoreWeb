@@ -7,6 +7,8 @@ class RaceManager {
   }
 
   init() {
+    console.log('Race Manager initialized');
+    console.log('Races loaded:', this.races);
     this.renderRacesBySeason();
     this.updateGlobe();
     this.setupLikeListeners();
@@ -19,13 +21,18 @@ class RaceManager {
       'ss': { confirmed: [], radar: [], past: [] }
     };
 
+    console.log('Starting to categorize races...');
+
     // Categorize races by season
     ['confirmed', 'radar', 'past'].forEach(status => {
       this.races[status].forEach(race => {
         const season = this.getSeason(race.date);
+        console.log(`Race: ${race.name}, Date: ${race.date}, Season: ${season}, Status: ${status}`);
         seasons[season][status].push(race);
       });
     });
+
+    console.log('Categorized races:', seasons);
 
     // Render each season and status
     Object.keys(seasons).forEach(season => {
@@ -37,6 +44,9 @@ class RaceManager {
           seasons[season][status].forEach(race => {
             container.appendChild(this.createRaceCard(race));
           });
+          console.log(`Rendered ${seasons[season][status].length} races to ${containerId}`);
+        } else {
+          console.warn(`Container not found: ${containerId}`);
         }
       });
     });
@@ -45,15 +55,28 @@ class RaceManager {
   // Determine season from date
   getSeason(dateStr) {
     if (!dateStr) return 'fw';
-    const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
     const dateLower = dateStr.toLowerCase();
     
-    for (let i = 0; i < months.length; i++) {
-      if (dateLower.includes(months[i])) {
-        // Sept-Feb = Fall/Winter (9-2)
-        return (i >= 8 || i <= 1) ? 'fw' : 'ss';
+    // Fall-Winter: Sep, Oct, Nov, Dec, Jan, Feb (months 9-12, 1-2)
+    const fallWinter = ['sep', 'oct', 'nov', 'dec', 'jan', 'feb', 'sept', 'september', 'october', 'november', 'december', 'january', 'february'];
+    
+    // Spring-Summer: Mar, Apr, May, Jun, Jul, Aug (months 3-8)
+    const springSummer = ['mar', 'apr', 'may', 'jun', 'jul', 'aug', 'march', 'april', 'june', 'july', 'august'];
+    
+    // Check for fall-winter months
+    for (let month of fallWinter) {
+      if (dateLower.includes(month)) {
+        return 'fw';
       }
     }
+    
+    // Check for spring-summer months
+    for (let month of springSummer) {
+      if (dateLower.includes(month)) {
+        return 'ss';
+      }
+    }
+    
     return 'fw'; // default
   }
 
