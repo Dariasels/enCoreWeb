@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>enCore – login</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body{display:flex;justify-content:center;align-items:center;height:100vh}
+    .login-box{background:rgba(0,0,0,.5);padding:2rem 3rem;border-radius:1rem;text-align:center}
+    .login-box h2{margin-top:0}
+    .provider-btn{display:block;width:100%;margin:.7rem 0;padding:.7rem;border:none;border-radius:6px;cursor:pointer;font-weight:bold}
+    .google{background:#4285f4;color:#fff}
+    .email{background:#34a853;color:#fff}
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Join enCore</h2>
+
+    <!-- GOOGLE -->
+    <button class="provider-btn google" id="googleBtn">
+      <i class="fab fa-google"></i>  Google
+    </button>
+
+    <!-- EMAIL / PASSWORD -->
+    <input id="emailIn"    type="email"    placeholder="Email"    style="width:100%;margin:.7rem 0;padding:.7rem;border-radius:6px;border:none;">
+    <input id="passwordIn" type="password" placeholder="Password" style="width:100%;margin:.7rem 0;padding:.7rem;border-radius:6px;border:none;">
+    <button class="provider-btn email" id="emailBtn">
+      <i class="fas fa-envelope"></i>  Sign in with email
+    <button class="provider-btn logout" id="logoutBtn" style="display:none">
+      <i class="fas fa-sign-out-alt"></i>  Logout
+    </button>
+  </div>
+
+<script type="module" defer>
+  import { signInWithPopup, GoogleAuthProvider } from
+          "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+  import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from
+          "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+  import { auth } from "./js/firebase-config.js";
+  import { signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+  /* ---- show/hide logout button ---- */
+  function toggleLogout() {
+    const btn = document.getElementById('logoutBtn');
+    btn.style.display = auth.currentUser ? 'block' : 'none';
+  }
+  toggleLogout();          // initial paint
+  auth.onAuthStateChanged(toggleLogout);
+
+  /* ---- logout click ---- */
+  document.getElementById('logoutBtn').onclick = async () => {
+    await signOut(auth);
+    location.reload();     // back to logged-out state
+  };
+
+
+  window.addEventListener('DOMContentLoaded', () => {
+    /* ----------  GOOGLE  ---------- */
+    document.getElementById('googleBtn').onclick = async () => {
+      try {
+        await signInWithPopup(auth, new GoogleAuthProvider());
+        location.reload();
+      } catch (err) {
+        console.error(err.code, err.message);
+        alert(err.code + '\n' + err.message);
+      }
+    };
+
+    /* ----------  EMAIL/PASS  ---------- */
+    document.getElementById('emailBtn').onclick = async () => {
+      const email = document.getElementById('emailIn').value.trim();
+      const pass  = document.getElementById('passwordIn').value.trim();
+      if (!email || !pass) return alert('Fill both fields');
+
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (err) {
+        if (err.code === 'auth/user-not-found') {
+          await createUserWithEmailAndPassword(auth, email, pass);
+        } else if (
+            err.code === 'auth/wrong-password' ||
+            err.code === 'auth/invalid-login-credentials' ||
+            err.code === 'auth/email-already-in-use'   // ← never reached, but safe
+        ) {
+          alert('Wrong password – try again or use “Forgot password” later.');
+        } else {
+          alert(err.code + '\n' + err.message);
+        }
+        return;
+      }
+      location.reload();
+    };
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Runs - enCore</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+    }
+
+    .profile-header {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .profile-avatar-large {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #ff6b35;
+    }
+
+    .profile-info h2 {
+      margin: 0 0 0.5rem 0;
+      color: #333;
+    }
+
+    .profile-username {
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .profile-bio {
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .profile-location {
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .edit-profile-btn {
+      background: #2196F3;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .edit-profile-btn:hover {
+      background: #1976D2;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      color: #ff6b35;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-header h3 {
+      color: #333;
+      margin: 0;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .filter-tab {
+      padding: 0.5rem 1rem;
+      border: 2px solid #ddd;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-tab.active {
+      background: #ff6b35;
+      color: white;
+      border-color: #ff6b35;
+    }
+
+    .races-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .race-card-small {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .race-card-small:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
+    .race-card-image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .race-card-body {
+      padding: 1rem;
+    }
+
+    .race-card-title {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .race-card-date {
+      color: #666;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .race-card-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .race-card-btn {
+      flex: 1;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: none;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .btn-view {
+      background: #ff6b35;
+      color: white;
+    }
+
+    .btn-view:hover {
+      background: #e55a2b;
+    }
+
+    .btn-leave {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-leave:hover {
+      background: #d32f2f;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      color: #ddd;
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+      color: #999;
+      margin-bottom: 1.5rem;
+    }
+
+    .browse-races-btn {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .browse-races-btn:hover {
+      background: #e55a2b;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <div class="login-widget" id="authWidget">
+    <img id="userImg" src="" hidden>
+    <span id="userName"></span>
+    <button id="loginOutBtn">Login</button>
+  </div>
+
+  <script type="module">
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { auth } from "./js/firebase-config.js";
+
+    const widget = document.getElementById('authWidget');
+    const img = document.getElementById('userImg');
+    const name = document.getElementById('userName');
+    const btn = document.getElementById('loginOutBtn');
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        img.src = user.photoURL;
+        img.hidden = false;
+        name.textContent = user.displayName?.split(' ')[0];
+        btn.textContent = 'Logout';
+      } else {
+        img.hidden = true;
+        name.textContent = '';
+        btn.textContent = 'Login';
+      }
+    });
+
+    btn.onclick = () => auth.currentUser ? signOut(auth) : location = 'login.html';
+  </script> -->
+  <script type="module">
+    import { injectLoginWidget } from './js/login-widget.js';
+    injectLoginWidget();   // creates ONE widget at runtime
+  </script>
+  <header id="main-header">
+    <h1>enCore</h1>
+    <p>Sharing core memories around the world</p>
+    <p>by Daria S</p>
+    <nav>
+      <a href="index.html">Home&nbsp;&nbsp;<i class="fa-solid fa-cloud"></i></a>
+      <a href="running.html">Running</a>
+      <a href="hiking.html">Hiking</a>
+      <a href="backpacking.html">Backpacking</a>
+      <a href="diving.html">Diving</a>
+      <a href="ski.html">Skiing</a>
+      <a href="food.html">Food</a>
+      <a href="suggestions.html">Suggestions</a>
+      <a href="inspiration.html">Inspiration</a>
+      <a href="past.html">Past Trips</a>
+    </nav>
+  </header>
+
+  <main class="content">
+    <div class="dashboard-container">
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <img id="profileAvatar" class="profile-avatar-large" src="" alt="Profile">
+        <div class="profile-info">
+          <h2 id="profileDisplayName">Loading...</h2>
+          <div class="profile-username" id="profileUsername">@username</div>
+          <div class="profile-bio" id="profileBio"></div>
+          <div class="profile-location" id="profileLocation"></div>
+          <a href="edit-profile.html" class="edit-profile-btn">
+            <i class="fa-solid fa-edit"></i> Edit Profile
+          </a>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-running"></i></div>
+          <div class="stat-value" id="statUpcoming">0</div>
+          <div class="stat-label">Upcoming Races</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-check-circle"></i></div>
+          <div class="stat-value" id="statCompleted">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-value" id="statConnections">0</div>
+          <div class="stat-label">Running Buddies</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-heart"></i></div>
+          <div class="stat-value" id="statLiked">0</div>
+          <div class="stat-label">Races Liked</div>
+        </div>
+      </div>
+
+      <!-- My Races Section -->
+      <div class="section-header">
+        <h3>My Races</h3>
+        <div class="filter-tabs">
+          <button class="filter-tab active" data-filter="all">All</button>
+          <button class="filter-tab" data-filter="upcoming">Upcoming</button>
+          <button class="filter-tab" data-filter="past">Past</button>
+        </div>
+      </div>
+
+      <div id="racesContainer" class="races-grid">
+        <!-- Races will be loaded here -->
+      </div>
+
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <i class="fa-solid fa-calendar-xmark"></i>
+        <h3>No races yet</h3>
+        <p>Start your running journey by joining a race!</p>
+        <a href="running.html" class="browse-races-btn">Browse Races</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="races-data.js"></script>
+
+  <script type="module">
+    import { auth, db } from './js/firebase-config.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    import { doc, getDoc, collection, query, where, getDocs, updateDoc, arrayRemove } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
+    let currentUser = null;
+    let userProfile = null;
+    let myRaces = [];
+    let currentFilter = 'all';
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      currentUser = user;
+
+      // Load user profile
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      
+      if (!userDoc.exists() || !userDoc.data().profileComplete) {
+        // Redirect to profile setup
+        window.location.href = 'profile-setup.html';
+        return;
+      }
+
+      userProfile = userDoc.data();
+      displayProfile();
+      await loadMyRaces();
+    });
+
+    function displayProfile() {
+      document.getElementById('profileAvatar').src = userProfile.photoURL || `https://robohash.org/${currentUser.uid}?size=120x120`;
+      document.getElementById('profileDisplayName').textContent = userProfile.displayName;
+      document.getElementById('profileUsername').textContent = `@${userProfile.username}`;
+      document.getElementById('profileBio').textContent = userProfile.bio || '';
+      
+      if (userProfile.location) {
+        document.getElementById('profileLocation').innerHTML = `
+          <i class="fa-solid fa-location-dot"></i> ${userProfile.location}
+        `;
+      }
+    }
+
+    async function loadMyRaces() {
+      try {
+        // Get all events where user is in "going" array
+        const eventsQuery = query(
+          collection(db, 'events'),
+          where('going', 'array-contains', currentUser.uid)
+        );
+        
+        const eventsSnapshot = await getDocs(eventsQuery);
+        myRaces = [];
+
+        eventsSnapshot.forEach((doc) => {
+          const eventData = doc.data();
+          // Find full race data from hardcoded data
+          const allRaces = [
+            ...racesData.confirmed,
+            ...racesData.radar,
+            ...racesData.past
+          ];
+          const raceInfo = allRaces.find(r => r.id === doc.id);
+          
+          if (raceInfo) {
+            myRaces.push({
+              ...raceInfo,
+              ...eventData,
+              firestoreId: doc.id
+            });
+          }
+        });
+
+        updateStats();
+        displayRaces();
+
+      } catch (error) {
+        console.error('Error loading races:', error);
+      }
+    }
+
+    function updateStats() {
+      const now = new Date();
+      const upcoming = myRaces.filter(r => {
+        if (!r.date) return true;
+        const raceDate = new Date(r.date);
+        return raceDate >= now;
+      });
+      const past = myRaces.filter(r => {
+        if (!r.date) return false;
+        const raceDate = new Date(r.date);
+        return raceDate < now;
+      });
+
+      document.getElementById('statUpcoming').textContent = upcoming.length;
+      document.getElementById('statCompleted').textContent = past.length;
+      
+      // Count unique runners across all races
+      const uniqueRunners = new Set();
+      myRaces.forEach(race => {
+        if (race.going) {
+          race.going.forEach(uid => {
+            if (uid !== currentUser.uid) uniqueRunners.add(uid);
+          });
+        }
+      });
+      document.getElementById('statConnections').textContent = uniqueRunners.size;
+
+      // Load liked races from localStorage
+      const userLikes = localStorage.getItem(`userLikes_${currentUser.uid}`);
+      const likedCount = userLikes ? JSON.parse(userLikes).length : 0;
+      document.getElementById('statLiked').textContent = likedCount;
+    }
+
+    function displayRaces() {
+      const container = document.getElementById('racesContainer');
+      const emptyState = document.getElementById('emptyState');
+
+      let filteredRaces = myRaces;
+
+      if (currentFilter === 'upcoming') {
+        const now = new Date();
+        filteredRaces = myRaces.filter(r => {
+          if (!r.date) return true;
+          const raceDate = new Date(r.date);
+          return raceDate >= now;
+        });
+      } else if (currentFilter === 'past') {
+        const now = new Date();
+        filteredRaces = myRaces.filter(r => {
+          if (!r.date) return false;
+          const raceDate = new Date(r.date);
+          return raceDate < now;
+        });
+      }
+
+      if (filteredRaces.length === 0) {
+        container.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      container.style.display = 'grid';
+      emptyState.style.display = 'none';
+
+      container.innerHTML = filteredRaces.map(race => `
+        <div class="race-card-small">
+          ${race.image ? `<img src="${race.image}" class="race-card-image" alt="${race.name}">` : ''}
+          <div class="race-card-body">
+            <div class="race-card-title">${race.name}</div>
+            <div class="race-card-date">
+              <i class="fa-regular fa-calendar"></i>
+              ${race.date || 'Date TBD'}
+            </div>
+            <div class="race-card-actions">
+              <a href="race-details.html?id=${race.id}" class="race-card-btn btn-view">
+                View Details
+              </a>
+              <button class="race-card-btn btn-leave" onclick="leaveRace('${race.id}')">
+                Leave
+              </button>
+            </div>
+          </div>
+        </div>

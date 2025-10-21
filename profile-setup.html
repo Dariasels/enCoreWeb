@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complete Your Profile - enCore</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .setup-container {
+      max-width: 600px;
+      margin: 4rem auto;
+      background: white;
+      padding: 3rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .setup-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .setup-header h1 {
+      color: #ff6b35;
+      margin-bottom: 0.5rem;
+    }
+
+    .setup-header p {
+      color: #666;
+    }
+
+    .profile-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding: 2rem;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      border: 4px solid #ff6b35;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #ff6b35;
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 0.5rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: normal;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 1rem;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: #e55a2b;
+    }
+
+    .submit-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .error-message {
+      background: #ffe5e5;
+      color: #d32f2f;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .success-message {
+      background: #e5ffe5;
+      color: #2f7d32;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <header id="main-header">
+    <h1>enCore</h1>
+    <p>Sharing core memories around the world</p>
+    <p>by Daria S</p>
+  </header>
+
+  <main class="content">
+    <div class="setup-container">
+      <div class="setup-header">
+        <h1>Welcome! 👋</h1>
+        <p>Let's set up your runner profile</p>
+      </div>
+
+      <div class="profile-preview">
+        <img id="previewAvatar" class="profile-avatar" src="" alt="Profile">
+        <span id="previewEmail"></span>
+      </div>
+
+      <div class="error-message" id="errorMessage"></div>
+      <div class="success-message" id="successMessage"></div>
+
+      <form id="profileForm">
+        <div class="form-group">
+          <label for="username">Username *</label>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            required 
+            minlength="3"
+            maxlength="20"
+            pattern="[a-zA-Z0-9_]+"
+            placeholder="runner_daria"
+          >
+          <small>3-20 characters, letters, numbers, and underscores only</small>
+        </div>
+
+        <div class="form-group">
+          <label for="displayName">Display Name *</label>
+          <input 
+            type="text" 
+            id="displayName" 
+            name="displayName" 
+            required 
+            placeholder="Daria"
+          >
+          <small>This is how others will see you</small>
+        </div>
+
+        <div class="form-group">
+          <label for="bio">Bio</label>
+          <textarea 
+            id="bio" 
+            name="bio" 
+            rows="3"
+            maxlength="200"
+            placeholder="Tell us about yourself and your running goals..."
+          ></textarea>
+          <small>Optional - max 200 characters</small>
+        </div>
+
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input 
+            type="text" 
+            id="location" 
+            name="location" 
+            placeholder="Brussels, Belgium"
+          >
+          <small>Optional - where are you based?</small>
+        </div>
+
+        <div class="form-group">
+          <label>Notification Preferences</label>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="emailRaceReminders" name="emailRaceReminders" checked>
+            <label for="emailRaceReminders">Email me race reminders (7 days before)</label>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="emailNewRunners" name="emailNewRunners" checked>
+            <label for="emailNewRunners">Email me when someone joins my races</label>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="emailChatMessages" name="emailChatMessages">
+            <label for="emailChatMessages">Email me chat messages</label>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="emailNewEvents" name="emailNewEvents" checked>
+            <label for="emailNewEvents">E-mail me when new races are posted</label>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="emailSubReminder" name="emailSubReminder" checked>
+            <label for="emailSubReminder">E-mail me before subscription deadlines</label>
+          </div>
+        </div>-
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          Complete Profile
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <script type="module">
+    import { auth, db } from './js/firebase-config.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    import { doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
+    let currentUser = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      currentUser = user;
+
+      // Check if profile already exists
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists() && userDoc.data().profileComplete) {
+        // Profile already complete, redirect to dashboard
+        window.location.href = 'my-runs.html';
+        return;
+      }
+
+      // Pre-fill form with Google data
+      document.getElementById('previewAvatar').src = user.photoURL || `https://robohash.org/${user.uid}?size=100x100`;
+      document.getElementById('previewEmail').textContent = user.email;
+      document.getElementById('displayName').value = user.displayName?.split(' ')[0] || '';
+      
+      // Suggest username from email
+      const suggestedUsername = user.email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_');
+      document.getElementById('username').value = suggestedUsername;
+    });
+
+    // Handle form submission
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById('submitBtn');
+      const errorMsg = document.getElementById('errorMessage');
+      const successMsg = document.getElementById('successMessage');
+
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
+      const formData = {
+        username: document.getElementById('username').value.trim().toLowerCase(),
+        displayName: document.getElementById('displayName').value.trim(),
+        bio: document.getElementById('bio').value.trim(),
+        location: document.getElementById('location').value.trim(),
+        email: currentUser.email,
+        photoURL: currentUser.photoURL,
+        notifications: {
+          raceReminders: document.getElementById('emailRaceReminders').checked,
+          newRunners: document.getElementById('emailNewRunners').checked,
+          chatMessages: document.getElementById('emailChatMessages').checked,
+          newEvents: document.getElementById('emailNewEvents').checked,
+          subscriptionReminder: document.getElementById('emailSubReminder').checked
+        },
+        profileComplete: true,
+        createdAt: new Date().toISOString(),
+        uid: currentUser.uid
+      };
+
+      try {
+        // Check if username is taken
+        const usernamesRef = doc(db, 'usernames', formData.username);
+        const usernameDoc = await getDoc(usernamesRef);
+        
+        if (usernameDoc.exists() && usernameDoc.data().uid !== currentUser.uid) {
+          throw new Error('Username already taken. Please choose another.');
+        }
+
+        // Save user profile
+        await setDoc(doc(db, 'users', currentUser.uid), formData);
+
+        // Reserve username
+        await setDoc(doc(db, 'usernames', formData.username), {
+          uid: currentUser.uid,
+          claimedAt: new Date().toISOString()
+        });
+
+        successMsg.textContent = 'Profile created successfully! Redirecting...';
+        successMsg.style.display = 'block';
+
+        setTimeout(() => {
+          window.location.href = 'my-runs.html';
+        }, 1500);
+
+      } catch (error) {
+        console.error('Error saving profile:', error);
+        errorMsg.textContent = error.message || 'Error creating profile. Please try again.';
+        errorMsg.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Complete Profile';
+      }
+    });
+
+    // Live username validation
+    document.getElementById('username').addEventListener('input', async (e) => {
+      const username = e.target.value.trim().toLowerCase();
+      
+      if (username.length < 3) return;
+
+      try {
+        const usernamesRef = doc(db, 'usernames', username);
+        const usernameDoc = await getDoc(usernamesRef);
+        
+        if (usernameDoc.exists() && usernameDoc.data().uid !== currentUser?.uid) {
+          e.target.setCustomValidity('Username already taken');
+        } else {
+          e.target.setCustomValidity('');
+        }
+      } catch (error) {
+        console.error('Error checking username:', error);
+      }
+    });
+  </script>
+</body>
+</html>

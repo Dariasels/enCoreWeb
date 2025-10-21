@@ -6,139 +6,187 @@
   <title>enCore - Running</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Only keep globe.gl -->
   <script src="https://unpkg.com/globe.gl"></script>
   <style>
-    /* Additional styles for the automated system */
-    .admin-panel {
-      background: #f5f5f5;
-      padding: 20px;
-      margin: 20px 0;
-      border-radius: 8px;
-      border: 2px solid #ddd;
-    }
-
-    .admin-panel h3 {
-      color: #ff6b35;
-      margin-top: 0;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .form-row {
+    /* Race Card Styles */
+    .season-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      gap: 15rem;
+      margin: 2rem 0;
+    }
+    /* running.html (or style.css) */
+    .season-column {
+      display: flex;
+      flex-direction: column;
     }
 
-    .btn {
+    /* first heading inside each column */
+    .season-column h2 {
+      margin: 0 0 8.6rem 0;   /* same for both */
+    }
+
+    /* push the first heading of the RIGHT column down
+      until it lines up with “On the Radar” of the LEFT column */
+    .season-column:nth-child(2) h2 {
+      margin-top: 0rem;   /* tweak this value until they match */
+    }
+
+
+    .season-column h2 {
+      color: #ff6b35;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .season-column h3 {
+      font-size: 1.2rem;
+      margin: 2rem 0 1rem 0;
+      color: #d8cbcb;
+    }
+
+    .race-card {
+      background: white;
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .race-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
+    .race-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .race-details {
+      padding: 1.5rem;
+    }
+
+    .race-details h4 {
+      margin: 0 0 0.5rem 0;
+      color: #333;
+      font-size: 1.1rem;
+    }
+
+    .race-date {
+      color: #666;
+      font-size: 0.9rem;
+      margin: 0 0 1rem 0;
+    }
+
+    .race-date i {
+      margin-right: 0.3rem;
+    }
+
+    .race-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .like-btn, .join-btn, .info-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .like-btn {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .like-btn.liked {
+      background: #ffe5e5;
+      color: #ff6b35;
+    }
+
+    .like-btn:hover {
+      background: #e0e0e0;
+    }
+
+    .like-btn.liked:hover {
+      background: #ffd5d5;
+    }
+
+    .join-btn {
       background: #ff6b35;
       color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
     }
 
-    .btn:hover {
+    .join-btn:hover {
       background: #e55a2b;
     }
 
-    .btn-secondary {
+    .info-btn {
       background: #2196F3;
+      color: white;
     }
 
-    .btn-secondary:hover {
+    .info-btn:hover {
       background: #1976D2;
     }
 
-    .suggested-race {
-      animation: fadeIn 0.5s ease-in;
+    .going-avatars {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .going-avatars img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    .approval-controls button {
-      margin-left: 5px;
-    }
-
-    /* Hide admin panel by default */
-    .admin-panel {
-      display: none;
-    }
-
-    /* Show admin panel when admin mode is enabled */
-    body.admin-mode .admin-panel {
-      display: block;
+    @media (max-width: 768px) {
+      .season-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 <base target="_blank">
 </head>
 
-<div class="login-widget" id="authWidget">
-  <img id="userImg" src="" hidden>
-  <span id="userName"></span>
-  <button id="loginOutBtn">Login</button>
-</div>
-
-<script type="module">
-  import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-  import { auth } from "./js/firebase-config.js";
-
-  const widget = document.getElementById('authWidget');
-  const img    = document.getElementById('userImg');
-  const name   = document.getElementById('userName');
-  const btn    = document.getElementById('loginOutBtn');
-
-  onAuthStateChanged(auth, user=>{
-    if(user){
-      img.src=user.photoURL; img.hidden=false;
-      name.textContent=user.displayName.split(' ')[0];
-      btn.textContent='Logout';
-    }else{
-      img.hidden=true; name.textContent='';
-      btn.textContent='Login';
-    }
-  });
-  btn.onclick = () => auth.currentUser ? signOut(auth) : location='login.html';
-</script>
-
 <body>
+  
+  <script type="module">
+    import { injectLoginWidget } from './js/login-widget.js';
+    injectLoginWidget();   // creates ONE widget at runtime
+  </script>
   <header id="main-header">
     <h1>enCore</h1>
     <p>Sharing core memories around the world</p>
     <p>by Daria S</p>
     <nav>
-      <a href="index.html">Home&nbsp;&nbsp;<i class="fa-solid fa-cloud"></i></a>
-      <a href="running.html">Running</a>
-      <a href="hiking.html">Hiking</a>
-      <a href="backpacking.html">Backpacking</a>
-      <a href="diving.html">Diving</a>
-      <a href="ski.html">Skiing</a>
-      <a href="food.html">Food</a>
-      <a href="suggestions.html">Suggestions</a>
-      <a href="inspiration.html">Inspiration</a>
-      <a href="past.html">Past Trips</a>
+      <a href="index.html" target="_self">Home&nbsp;&nbsp;<i class="fa-solid fa-cloud"></i></a>
+      <a href="running.html" target="_self">Running</a>
+      <a href="hiking.html" target="_self">Hiking</a>
+      <a href="backpacking.html" target="_self">Backpacking</a>
+      <a href="diving.html" target="_self">Diving</a>
+      <a href="ski.html" target="_self">Skiing</a>
+      <a href="food.html" target="_self">Food</a>
+      <a href="suggestions.html" target="_self">Suggestions</a>
+      <a href="inspiration.html" target="_self">Inspiration</a>
+      <a href="past.html" target="_self">Past Trips</a>
     </nav>
   </header>
 
@@ -146,134 +194,40 @@
     <h2>Running Trips</h2>
     <p>
       The goal is to run (half) marathons around the world with people we meet on the way.
-      This way, we can build a community that works towards the same physical and mental goal,
-      and then meets each other at astounding places all around the world.
+      I want to build a community of extrordinary people who motivate eachother to work towards the same physical and mental goals. 
+      All of this while meeting eachother in astonishing places all around the world.
+
+      Sidenote: votes are used to assess popularity --> more votes = higher chance of being organized. (So, only vite for those you can actually attend)
     </p>
-<!-- ADMIN PANEL ------------------------------------------------>
-    <div class="admin-panel" style="display:none">
-      <h3>Add new event</h3>
-      <form id="addForm">
-        <input name="name"        placeholder="Race name" required>
-        <input name="date"        placeholder="March 15, 2026" required>
-        <input name="location"    placeholder="City, Country" required>
-        <input name="url"         placeholder="https://…" type="url">
-        <input name="image"       placeholder="pictures/xxx.jpg">
-        <select name="status">
-          <option>confirmed</option><option>radar</option><option>past</option>
-        </select>
-        <select name="sport">
-          <option>running</option><option>skiing</option><option>hiking</option>
-          <option>diving</option><option>backpacking</option>
-        </select>
-        <button type="submit">Save</button>
-      </form>
-      <button onclick="toggleAdmin()">Close admin</button>
-    </div>
-    <button onclick="toggleAdmin()" style="margin:1rem 0">Toggle admin</button>
-    <!------------------------------------------------------------->
-    <!-- Admin Panel for Race Management -->
-    <div class="admin-panel">
-      <h3><i class="fas fa-cog"></i> Race Management</h3>
-      
-      <!-- Add New Race Form -->
-      <form id="add-race-form">
-        <h4>Add New Race</h4>
-        <div class="form-group">
-          <label for="race-name">Race Name:</label>
-          <input type="text" id="race-name" name="name" required placeholder="e.g., New York Marathon">
-        </div>
-        
-        <div class="form-group">
-          <label for="race-url">Website URL:</label>
-          <input type="url" id="race-url" name="url" required placeholder="https://www.example-marathon.com">
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="race-date">Date:</label>
-            <input type="text" id="race-date" name="date" placeholder="e.g., March 15, 2026">
-          </div>
-          
-          <div class="form-group">
-            <label for="race-category">Category:</label>
-            <select id="race-category" name="category">
-              <option value="radar">On the Radar</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="past">Past</option>
-            </select>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="race-image">Image Path:</label>
-          <input type="text" id="race-image" name="image" placeholder="pictures/race-name.jpg">
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="race-lat">Latitude:</label>
-            <input type="number" id="race-lat" name="lat" step="0.0001" required placeholder="40.7128">
-          </div>
-          
-          <div class="form-group">
-            <label for="race-lng">Longitude:</label>
-            <input type="number" id="race-lng" name="lng" step="0.0001" required placeholder="-74.0060">
-          </div>
-        </div>
-        
-        <button type="submit" class="btn">Add Race</button>
-      </form>
 
-      <hr style="margin: 20px 0;">
-      
-      <!-- AI Suggestion Controls -->
-      <div>
-        <h4>AI Race Suggestions</h4>
-        <button id="ai-suggest-races" class="btn btn-secondary">
-          <i class="fas fa-robot"></i> Get AI Suggestions
-        </button>
-        <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
-          Click to get AI-suggested races based on your current destinations
-        </p>
+    <!-- RUNNING PAGE – SEASON SPLIT -->
+    <section class="season-grid">
+      <!-- LEFT COLUMN -->
+      <div class="season-column">
+        <h2><i class="fa-solid fa-snowflake"></i> Fall–Winter</h2>
+
+        <h3>✓ Confirmed</h3>
+        <div id="fw-confirmed"></div>
+
+        <h3>On the Radar</h3>
+        <div id="fw-radar"></div>
+
+        <h3>Past Runs</h3>
+        <div id="fw-past"></div>
       </div>
 
-      <hr style="margin: 20px 0;">
-      
-      <!-- Data Management -->
-      <div>
-        <h4>Data Management</h4>
-        <button onclick="raceManager.exportRaces()" class="btn btn-secondary">
-          <i class="fas fa-download"></i> Export Data
-        </button>
-        <button onclick="document.getElementById('import-file').click()" class="btn btn-secondary">
-          <i class="fas fa-upload"></i> Import Data
-        </button>
-        <input type="file" id="import-file" accept=".json" style="display: none;" onchange="raceManager.importRaces(this)">
-      </div>
-    </div>
+      <!-- RIGHT COLUMN -->
+      <div class="season-column">
+        <h2><i class="fa-solid fa-sun"></i> Spring–Summer</h2>
 
-    <!-- Toggle Admin Mode Button -->
-    <div style="text-align: center; margin: 20px 0;">
-      <button onclick="toggleAdminMode()" class="btn" id="admin-toggle">
-        <i class="fas fa-tools"></i> Enable Admin Mode
-      </button>
-    </div>
-    <section id="confirmed"><h3>Confirmed</h3></section>
-    <section id="radar"><h3>On the Radar</h3></section>
-    <section id="past"><h3>Past</h3></section>
+        <h3>✓ Confirmed</h3>
+        <div id="ss-confirmed"></div>
 
-    <script type="module">
-      import { EventRenderer } from './js/event-renderer.js';
-      new EventRenderer('confirmed','confirmed','running');
-      new EventRenderer('radar','radar','running');
-      new EventRenderer('past','past','running');
-    </script>
-    <section>
-      <h3>Upcoming Races:</h3>
-    <!--   <div class="race-scroll">-->
-        <div id="race-list">
-          <!-- Races will be dynamically loaded here -->
-      <!--  </div>-->
+        <h3>On the Radar</h3>
+        <div id="ss-radar"></div>
+
+        <h3>Past Runs</h3>
+        <div id="ss-past"></div>
       </div>
     </section>
   </main>
@@ -286,20 +240,6 @@
   <script src="race-manager.js"></script>
   
   <script>
-    // Admin mode toggle
-    function toggleAdminMode() {
-      const body = document.body;
-      const button = document.getElementById('admin-toggle');
-      
-      if (body.classList.contains('admin-mode')) {
-        body.classList.remove('admin-mode');
-        button.innerHTML = '<i class="fas fa-tools"></i> Enable Admin Mode';
-      } else {
-        body.classList.add('admin-mode');
-        button.innerHTML = '<i class="fas fa-times"></i> Disable Admin Mode';
-      }
-    }
-
     // Enhanced globe visualization
     document.addEventListener('DOMContentLoaded', () => {
       // Wait for race manager to initialize
@@ -370,69 +310,84 @@
         }
       }, 100);
     });
-
-    // Export races function
-    RaceManager.prototype.exportRaces = function() {
-      const data = this.exportData();
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `races-export-${new Date().toISOString().split('T')[0]}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    };
-
-    // Import races function
-    RaceManager.prototype.importRaces = function(input) {
-      const file = input.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          try {
-            const data = JSON.parse(e.target.result);
-            this.importData(data);
-            alert('Races imported successfully!');
-          } catch (error) {
-            alert('Error importing races: ' + error.message);
-          }
-        };
-        reader.readAsText(file);
-      }
-    };
   </script>
-<!-- 1-TIME IMPORT BUTTON (visible only to you) ------------>
-<script type="module">
-  import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-  import { db, auth } from "./js/firebase-config.js";
 
-  // your old array – already exists
-  import { races } from "./js/races-data.js";
+  <script type="module">
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { db, auth } from './js/firebase-config.js';
+    import { doc, onSnapshot, getDoc }
+    from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-  // create a big red button only for you
-  onAuthStateChanged(auth, user => {
-    if (user && user.email === "dariasels@gmail.com") {   // ← your google email
-      const btn = document.createElement('button');
-      btn.textContent = '📥 Import my races-data.js to Firestore (once)';
-      btn.onclick = async () => {
-        for (const r of races) {
-          await addDoc(collection(db, 'events'), {
-            name: r.name,
-            date: r.date,
-            location: r.location,
-            url: r.url || '',
-            image: r.image || '',
-            sport: 'running',
-            status: r.status || 'confirmed',
-            going: []
+    // Make auth globally available for race manager
+    window.auth = auth;
+
+    // Connect Firebase auth to race manager
+    onAuthStateChanged(auth, user => {
+      if (window.raceManager) {
+        // Re-render to show correct like states after auth changes
+        window.raceManager.renderRacesBySeason();
+        
+        if (user) {
+          // Setup live avatar updates for all races
+          const allRaces = [
+            ...window.raceManager.races.confirmed,
+            ...window.raceManager.races.radar,
+            ...window.raceManager.races.past
+          ];
+
+          allRaces.forEach(race => {
+            const avatarDiv = document.getElementById(`going-${race.id}`);
+            if (avatarDiv) {
+              // Check if Firestore document exists
+              const raceDocRef = doc(db, 'events', race.id);
+              
+              onSnapshot(raceDocRef, async (snap) => {
+                if (snap.exists()) {
+                  const data = snap.data();
+                  const going = data?.going || [];
+                  
+                  if (going.length > 0) {
+                    let avatarHTML = '';
+                    const displayLimit = 5;
+                    
+                    for (let i = 0; i < Math.min(going.length, displayLimit); i++) {
+                      const uid = going[i];
+                      let displayName = 'Runner';
+                      
+                      try {
+                        const userDocRef = doc(db, 'users', uid);
+                        const userDoc = await getDoc(userDocRef);
+                        if (userDoc.exists()) {
+                          displayName = userDoc.data().displayName || userDoc.data().name || 'Runner';
+                        } else if (uid === user.uid) {
+                          displayName = user.displayName?.split(' ')[0] || 'You';
+                        }
+                      } catch (e) {
+                        console.log('Could not fetch name for', uid);
+                      }
+                      
+                      avatarHTML += `<img src="https://robohash.org/${uid}?size=32x32" 
+                           title="${displayName}" 
+                           style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" />`;
+                    }
+                    
+                    if (going.length > displayLimit) {
+                      avatarHTML += `<span style="margin-left: 0.5rem; color: #666; font-size: 0.9rem;">+${going.length - displayLimit} more</span>`;
+                    }
+                    
+                    avatarDiv.innerHTML = avatarHTML;
+                  } else {
+                    avatarDiv.innerHTML = '';
+                  }
+                }
+              }, (error) => {
+                console.log(`Race ${race.id} not yet in Firestore`);
+              });
+            }
           });
         }
-        alert('Done – refresh the page!');
-        btn.disabled = true;
-      };
-      document.querySelector('main').prepend(btn);
-    }
-  });
-</script>
+      }
+    });
+  </script>
 </body>
 </html>
