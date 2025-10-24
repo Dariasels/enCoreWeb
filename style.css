@@ -1,7 +1,7 @@
 /* style.css */
 
 body {
-  font-family: Rockwell, 'Rockwell Nova', 'Roboto Slab', 'DejaVu Serif', 'Sitka Small', serif;
+  font-family: 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif;
   margin: 0;
   padding: 0;
   background: url('pictures/blur_cloudsbcn.jpeg') no-repeat center center fixed;

@@ -15,10 +15,7 @@
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    /* change Edit Profile heading color */
-    .edit-container h2 {
-      color: #ff6b35;
-    }
+
     .form-group {
       margin-bottom: 1.5rem;
     }
@@ -96,15 +93,6 @@
 
     .btn-cancel:hover {
       background: #ccc;
-    }
-
-    /* ...existing code... */
-    .edit-container .checkbox-group label[for="emailNewEvents"],
-    .edit-container .checkbox-group label[for="emailChatMessages"],
-    .edit-container .checkbox-group label[for="emailNewRunners"],
-    .edit-container .checkbox-group label[for="emailRaceReminders"],
-    .edit-container .checkbox-group label[for="emailSubReminder"] {
-      color: #000; /* make those two labels black */
     }
   </style>
 </head>
@@ -186,6 +174,11 @@
           </div>
         </div>
 
+        <div class="button-group">
+          <button type="button" class="btn btn-cancel" onclick="history.back()">Cancel</button>
+          <button type="submit" class="btn btn-save">Save Changes</button>
+        </div>
+
         <div class="checkbox-group">
           <input type="checkbox" id="emailNewEvents" name="emailNewEvents" checked>
           <label for="emailNewEvents">E-mail me when new races are posted</label>
@@ -196,15 +189,9 @@
           <label for="emailSubReminder">E-mail me before subscription deadlines</label>
         </div>
 
-        <div class="button-group">
-          <button type="button" class="btn btn-cancel" onclick="history.back()">Cancel</button>
-          <button type="submit" class="btn btn-save">Save Changes</button>
-        </div>
-
       </form>
     </div>
   </main>
-
 
   <script type="module">
     import { auth, db } from './js/firebase-config.js';
