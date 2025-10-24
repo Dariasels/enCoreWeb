@@ -27,7 +27,7 @@ onAuthStateChanged(auth, async (user) => {
         const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
         sessionStorage.removeItem('redirectAfterLogin');
         
-        window.location.href = redirectUrl || 'my-runs.html';
+        window.location.href = redirectUrl || 'profile-page.html';
       }
     } catch (error) {
       console.error('Error checking user profile:', error);

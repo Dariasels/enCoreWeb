@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile - enCore</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: Rockwell, 'Rockwell Nova', 'Roboto Slab', 'DejaVu Serif', 'Sitka Small', serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Back button */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+
+    .back-btn:hover {
+      transform: translateX(-4px);
+    }
+
+    /* Profile Card */
+    .profile-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .profile-avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 4px solid #ff6b35;
+      object-fit: cover;
+    }
+
+    .profile-info h1 {
+      margin: 0 0 0.5rem 0;
+      color: #333;
+      font-size: 2rem;
+    }
+
+    .profile-username {
+      color: #666;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    .profile-bio {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .profile-location {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+
+    .edit-profile-btn {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .edit-profile-btn:hover {
+      background: #e55a2b;
+    }
+
+    .edit-profile-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      color: #ff6b35;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    /* Runners Grid */
+    .runners-section {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .runners-section h2 {
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+
+    .runners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .runner-card {
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .runner-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .runner-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 auto 0.75rem;
+      border: 3px solid #ff6b35;
+      object-fit: cover;
+    }
+
+    .runner-name {
+      font-weight: bold;
+      color: #333;
+      word-break: break-word;
+    }
+
+    .runner-location {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    /* Globe Container */
+    .globe-container {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      margin: 2rem 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #globeViz {
+      width: 100% !important;
+      height: 600px !important;
+      max-width: 600px;
+    }
+
+    /* Avatar Picker Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      padding: 2rem;
+    }
+
+    .modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 16px;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .modal-close {
+      font-size: 2rem;
+      cursor: pointer;
+      color: #999;
+      background: none;
+      border: none;
+    }
+
+    .avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .avatar-option {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .avatar-option:hover {
+      border-color: #ff6b35;
+      transform: scale(1.1);
+    }
+
+    .avatar-option.selected {
+      border-color: #4CAF50;
+      box-shadow: 0 0 12px rgba(76, 175, 80, 0.6);
+    }
+
+    .save-btn {
+      width: 100%;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+
+    .save-btn:hover {
+      background: #45a049;
+    }
+
+    @media (max-width: 768px) {
+      .profile-card {
+        grid-template-columns: 1fr;
+      }
+      
+      #globeViz {
+        height: 400px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Back Button -->
+    <a href="running.html" class="back-btn">
+      <i class="fa-solid fa-arrow-left"></i> Back to Running
+    </a>
+
+    <!-- Profile Card -->
+    <div class="profile-card">
+      <img id="profileAvatar" class="profile-avatar" src="" alt="Profile">
+      <div class="profile-info">
+        <h1 id="profileName">Loading...</h1>
+        <div class="profile-username" id="profileUsername">@username</div>
+        <div class="profile-bio" id="profileBio"></div>
+        <div class="profile-location" id="profileLocation"></div>
+        
+        <div id="ownProfileButtons" style="display: none;">
+          <button class="edit-profile-btn" id="changeAvatarBtn">
+            <i class="fa-solid fa-image"></i> Change Avatar
+          </button>
+          <button class="edit-profile-btn" onclick="window.location.href='edit-profile.html'" style="background: #2196F3; margin-left: 0.5rem;">
+            <i class="fa-solid fa-edit"></i> Edit Profile
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-running"></i></div>
+        <div class="stat-value" id="statRaces">0</div>
+        <div class="stat-label">Races Joined</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-heart"></i></div>
+        <div class="stat-value" id="statLiked">0</div>
+        <div class="stat-label">Races Liked</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+        <div class="stat-value" id="statBuddies">0</div>
+        <div class="stat-label">Running Buddies</div>
+      </div>
+    </div>
+
+    <!-- Runners They're Racing With -->
+    <div id="runnersSection" class="runners-section" style="display: none;">
+      <h2><i class="fa-solid fa-users"></i> Running Buddies</h2>
+      <div id="runnersList" class="runners-grid"></div>
+    </div>
+  </div>
+
+  <!-- Avatar Picker Modal -->
+  <div id="avatarModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Choose Your Avatar</h2>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <div class="avatar-grid" id="avatarGrid"></div>
+      <button class="save-btn" id="saveAvatarBtn">Save Avatar</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth, db } from './js/firebase-config.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    import { doc, getDoc, collection, query, where, getDocs, updateDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
+    let currentUser = null;
+    let viewedUser = null;
+    let selectedAvatar = null;
+
+    // Get user ID from URL if viewing someone else's profile
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewedUserId = urlParams.get('uid');
+
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Determine whose profile to show
+      const profileUserId = viewedUserId || user.uid;
+      const isOwnProfile = profileUserId === user.uid;
+
+      try {
+        const userDoc = await getDoc(doc(db, 'users', profileUserId));
+        
+        if (!userDoc.exists()) {
+          alert('User not found');
+          window.location.href = 'running.html';
+          return;
+        }
+
+        viewedUser = userDoc.data();
+        displayProfile(isOwnProfile);
+        await loadStats(profileUserId);
+        await loadRunningBuddies(profileUserId);
+
+        if (isOwnProfile) {
+          setupAvatarPicker();
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+      }
+    });
+
+    function displayProfile(isOwnProfile) {
+      const avatar = viewedUser.photoURL || `https://robohash.org/${viewedUser.uid}?size=150x150`;
+      document.getElementById('profileAvatar').src = avatar;
+      document.getElementById('profileName').textContent = viewedUser.displayName || 'Runner';
+      document.getElementById('profileUsername').textContent = `@${viewedUser.username || 'unknown'}`;
+      document.getElementById('profileBio').textContent = viewedUser.bio || 'No bio yet';
+
+      if (viewedUser.location) {
+        document.getElementById('profileLocation').innerHTML = `
+          <i class="fa-solid fa-location-dot"></i> ${viewedUser.location}
+        `;
+      }
+
+      if (isOwnProfile) {
+        document.getElementById('ownProfileButtons').style.display = 'block';
+      }
+    }
+
+    async function loadStats(userId) {
+      try {
+        const eventsQuery = query(
+          collection(db, 'events'),
+          where('going', 'array-contains', userId)
+        );
+
+        const eventsSnapshot = await getDocs(eventsQuery);
+        document.getElementById('statRaces').textContent = eventsSnapshot.size;
+
+        // Liked races (from localStorage for now)
+        const userLikes = localStorage.getItem(`userLikes_${userId}`);
+        const likedCount = userLikes ? JSON.parse(userLikes).length : 0;
+        document.getElementById('statLiked').textContent = likedCount;
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+
+    async function loadRunningBuddies(userId) {
+      try {
+        const eventsQuery = query(
+          collection(db, 'events'),
+          where('going', 'array-contains', userId)
+        );
+
+        const eventsSnapshot = await getDocs(eventsQuery);
+        const buddyIds = new Set();
+
+        eventsSnapshot.forEach((doc) => {
+          const going = doc.data().going || [];
+          going.forEach(uid => {
+            if (uid !== userId) buddyIds.add(uid);
+          });
+        });
+
+        document.getElementById('statBuddies').textContent = buddyIds.size;
+
+        if (buddyIds.size > 0) {
+          const runnersList = document.getElementById('runnersList');
+          runnersList.innerHTML = '';
+
+          for (const buddyId of buddyIds) {
+            try {
+              const buddyDoc = await getDoc(doc(db, 'users', buddyId));
+              if (buddyDoc.exists()) {
+                const buddy = buddyDoc.data();
+                const avatar = buddy.photoURL || `https://robohash.org/${buddyId}?size=100x100`;
+
+                const card = document.createElement('div');
+                card.className = 'runner-card';
+                card.onclick = () => window.location.href = `?uid=${buddyId}`;
+                card.innerHTML = `
+                  <img src="${avatar}" class="runner-avatar" alt="${buddy.displayName}">
+                  <div class="runner-name">${buddy.displayName || 'Runner'}</div>
+                  ${buddy.location ? `<div class="runner-location">${buddy.location}</div>` : ''}
+                `;
+                runnersList.appendChild(card);
+              }
+            } catch (e) {
+              console.error('Error loading buddy:', e);
+            }
+          }
+
+          document.getElementById('runnersSection').style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Error loading buddies:', error);
+      }
+    }
+
+    function setupAvatarPicker() {
+      const avatarStyles = [
+        'adventurer', 'avataaars', 'bottts', 'croodles', 'fun-emoji',
+        'lorelei', 'micah', 'miniavs', 'open-peeps', 'personas',
+        'pixel-art', 'rings', 'shapes', 'thumbs'
+      ];
+
+      const grid = document.getElementById('avatarGrid');
+      grid.innerHTML = '';
+
+      avatarStyles.forEach((style, idx) => {
+        const img = document.createElement('img');
+        img.src = `https://api.dicebear.com/7.x/${style}/svg?seed=${currentUser.uid}`;
+        img.className = 'avatar-option';
+        img.onclick = () => selectAvatar(img, img.src);
+        grid.appendChild(img);
+      });
+
+      document.getElementById('changeAvatarBtn').onclick = () => {
+        document.getElementById('avatarModal').style.display = 'block';
+      };
+
+      document.getElementById('closeModal').onclick = () => {
+        document.getElementById('avatarModal').style.display = 'none';
+      };
+
+      document.getElementById('saveAvatarBtn').onclick = saveAvatar;
+    }
+
+    function selectAvatar(element, url) {
+      document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedAvatar = url;
+    }
+
+    async function saveAvatar() {
+      if (!selectedAvatar) {
+        alert('Please select an avatar');
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          photoURL: selectedAvatar
+        });
+
+        document.getElementById('profileAvatar').src = selectedAvatar;
+        document.getElementById('avatarModal').style.display = 'none';
+        alert('Avatar updated!');
+      } catch (error) {
+        console.error('Error saving avatar:', error);
+        alert('Error saving avatar');
+      }
+    }
+
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('avatarModal');
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

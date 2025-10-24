@@ -15,19 +15,23 @@
       gap: 15rem;
       margin: 2rem 0;
     }
-
+    /* running.html (or style.css) */
     .season-column {
       display: flex;
       flex-direction: column;
     }
 
+    /* first heading inside each column */
     .season-column h2 {
-      margin: 0 0 8.6rem 0;
+      margin: 0 0 8.6rem 0;   /* same for both */
     }
 
+    /* push the first heading of the RIGHT column down
+      until it lines up with “On the Radar” of the LEFT column */
     .season-column:nth-child(2) h2 {
-      margin-top: 0rem;
+      margin-top: 0rem;   /* tweak this value until they match */
     }
+
 
     .season-column h2 {
       color: #ff6b35;
@@ -151,82 +155,23 @@
       border-radius: 50%;
       border: 2px solid white;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .going-avatars img:hover {
-      transform: scale(1.1);
-    }
-
-    /* Globe Container - CENTERED */
-    .globe-section {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      margin: 4rem 0;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-    }
-
-    .globe-container {
-      width: 100%;
-      max-width: 650px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #globeViz {
-      width: 100% !important;
-      height: 600px !important;
-    }
-
-    #globe-info {
-      text-align: center;
-      margin: 1.5rem 0;
-      font-weight: bold;
-      color: #fff;
-      font-size: 1.1rem;
     }
 
     @media (max-width: 768px) {
       .season-grid {
         grid-template-columns: 1fr;
-        gap: 2rem;
-      }
-
-      .season-column h2 {
-        margin: 0 0 1.5rem 0;
-      }
-
-      .season-column:nth-child(2) h2 {
-        margin-top: 0;
-      }
-
-      #globeViz {
-        height: 400px !important;
-      }
-
-      .globe-section {
-        padding: 1rem;
       }
     }
-
-    <base target="_blank">
   </style>
 <base target="_blank">
 </head>
 
 <body>
+  
   <script type="module">
     import { injectLoginWidget } from './js/login-widget.js';
-    injectLoginWidget();
+    injectLoginWidget();   // creates ONE widget at runtime
   </script>
-
   <header id="main-header">
     <h1>enCore</h1>
     <p>Sharing core memories around the world</p>
@@ -252,7 +197,7 @@
       I want to build a community of extrordinary people who motivate eachother to work towards the same physical and mental goals. 
       All of this while meeting eachother in astonishing places all around the world.
 
-      Sidenote: votes are used to assess popularity --> more votes = higher chance of being organized. (So, only vote for those you can actually attend)
+      Sidenote: votes are used to assess popularity --> more votes = higher chance of being organized. (So, only vite for those you can actually attend)
     </p>
 
     <!-- RUNNING PAGE – SEASON SPLIT -->
@@ -285,22 +230,19 @@
         <div id="ss-past"></div>
       </div>
     </section>
-
-    <!-- GLOBE SECTION - CENTERED -->
-    <section class="globe-section">
-      <div class="globe-container">
-        <div id="globeViz"></div>
-      </div>
-      <div id="globe-info"></div>
-    </section>
   </main>
+
+  <div id="globeViz" style="width: 600px; height: 600px; margin: 2rem auto;"></div>
+  <div id="globe-info" style="text-align:center; margin-top:1rem; font-weight:bold;"></div>
 
   <!-- Load race data and manager -->
   <script src="races-data.js"></script>
   <script src="race-manager.js"></script>
   
   <script>
+    // Enhanced globe visualization
     document.addEventListener('DOMContentLoaded', () => {
+      // Wait for race manager to initialize
       setTimeout(() => {
         if (window.raceManager) {
           const allRaces = [
@@ -319,8 +261,7 @@
                    race.status === 'confirmed' ? '#ff6b35' : '#ffa500'
           }));
 
-          // Initialize globe with proper sizing
-          const globeContainer = document.getElementById('globeViz');
+          // Initialize globe
           const globe = Globe()
             .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
             .pointsData(pins)
@@ -329,8 +270,6 @@
             .pointAltitude('size')
             .pointColor('color')
             .pointLabel('label')
-            .width(globeContainer.clientWidth)
-            .height(globeContainer.clientHeight)
             .onPointClick(pin => {
               document.getElementById('globe-info').innerText = `Selected: ${pin.label}`;
               const target = document.querySelector(pin.link);
@@ -339,12 +278,17 @@
               }
             });
 
-          globe(globeContainer);
+          const globeElement = document.getElementById('globeViz');
+          globe(globeElement);
+          
+          // Store globe reference globally for race manager
           window.globe = globe;
 
+          // Auto-rotate setup
           globe.controls().autoRotate = true;
           globe.controls().autoRotateSpeed = 1.5;
 
+          // Stop auto-rotate on interaction
           globe.controls().addEventListener('start', () => {
             globe.controls().autoRotate = false;
           });
@@ -362,14 +306,7 @@
             });
           }, { threshold: 0.1 });
 
-          observer.observe(globeContainer);
-
-          // Handle window resize
-          window.addEventListener('resize', () => {
-            if (globeContainer.clientWidth > 0) {
-              globe.width(globeContainer.clientWidth).height(globeContainer.clientHeight);
-            }
-          });
+          observer.observe(globeElement);
         }
       }, 100);
     });
@@ -381,13 +318,17 @@
     import { doc, onSnapshot, getDoc }
     from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
+    // Make auth globally available for race manager
     window.auth = auth;
 
+    // Connect Firebase auth to race manager
     onAuthStateChanged(auth, user => {
       if (window.raceManager) {
+        // Re-render to show correct like states after auth changes
         window.raceManager.renderRacesBySeason();
         
         if (user) {
+          // Setup live avatar updates for all races
           const allRaces = [
             ...window.raceManager.races.confirmed,
             ...window.raceManager.races.radar,
@@ -397,6 +338,7 @@
           allRaces.forEach(race => {
             const avatarDiv = document.getElementById(`going-${race.id}`);
             if (avatarDiv) {
+              // Check if Firestore document exists
               const raceDocRef = doc(db, 'events', race.id);
               
               onSnapshot(raceDocRef, async (snap) => {
@@ -426,8 +368,7 @@
                       
                       avatarHTML += `<img src="https://robohash.org/${uid}?size=32x32" 
                            title="${displayName}" 
-                           onclick="window.location.href='profile-page.html?uid=${uid}'"
-                           style="cursor: pointer; transition: transform 0.2s;" />`;
+                           style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" />`;
                     }
                     
                     if (going.length > displayLimit) {

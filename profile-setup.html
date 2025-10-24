@@ -269,7 +269,7 @@
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       if (userDoc.exists() && userDoc.data().profileComplete) {
         // Profile already complete, redirect to dashboard
-        window.location.href = 'my-runs.html';
+        window.location.href = 'profile-page.html';
         return;
       }
 
@@ -337,7 +337,7 @@
         successMsg.style.display = 'block';
 
         setTimeout(() => {
-          window.location.href = 'my-runs.html';
+          window.location.href = 'profile-page.html';
         }, 1500);
 
       } catch (error) {

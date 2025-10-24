@@ -588,7 +588,8 @@
       const styles = ['adventurer', 'avataaars', 'bottts', 'fun-emoji', 'lorelei', 'micah', 'miniavs', 'open-peeps', 'personas', 'pixel-art'];
       
       container.innerHTML = styles.map(style => {
-        const url = `https://robohash.org/${uid}?size=32x32`;
+        // const url = `https://robohash.org/${uid}?size=32x32`;
+        const url = `https://robohash.org/${currentUser.uid}?size=32x32`
         return `<img src="${url}" class="avatar-option" data-url="${url}">`;
       }).join('');
 
