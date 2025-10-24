@@ -3,120 +3,582 @@
 <head>
   <meta charset="utf-8"/>
   <title>enCore – login</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body{display:flex;justify-content:center;align-items:center;height:100vh}
-    .login-box{background:rgba(0,0,0,.5);padding:2rem 3rem;border-radius:1rem;text-align:center}
-    .login-box h2{margin-top:0;color:#fff;}
-    .provider-btn{display:block;width:100%;margin:.7rem 0;padding:.7rem;border:none;border-radius:6px;cursor:pointer;font-weight:bold}
-    .google{background:#4285f4;color:#fff}
-    .email{background:#34a853;color:#fff}
-    .logout{background:#f44336;color:#fff}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Rockwell, 'Rockwell Nova', 'Roboto Slab', serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 450px;
+      padding: 2rem;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .login-box h2 {
+      margin-bottom: 0.5rem;
+      color: #333;
+      text-align: center;
+      font-size: 1.8rem;
+    }
+
+    .login-box p {
+      text-align: center;
+      color: #666;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    /* Tabs */
+    .tab-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .tab-btn {
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      background: white;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: bold;
+      color: #666;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      background: #ff6b35;
+      color: white;
+      border-color: #ff6b35;
+    }
+
+    .tab-btn:hover {
+      border-color: #ff6b35;
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: #333;
+      font-size: 0.9rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #ff6b35;
+    }
+
+    .form-group input::placeholder {
+      color: #999;
+    }
+
+    /* Buttons */
+    .provider-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      width: 100%;
+      margin: 0.7rem 0;
+      padding: 0.85rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .provider-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .google {
+      background: white;
+      color: #4285f4;
+      border-color: #4285f4;
+    }
+
+    .google:hover {
+      background: #f0f7ff;
+    }
+
+    .email {
+      background: #ff6b35;
+      color: white;
+      border-color: #ff6b35;
+      margin-top: 1rem;
+    }
+
+    .email:hover {
+      background: #e55a2b;
+      border-color: #e55a2b;
+    }
+
+    .logout {
+      background: #f44336;
+      color: white;
+      border-color: #f44336;
+    }
+
+    .logout:hover {
+      background: #d32f2f;
+      border-color: #d32f2f;
+    }
+
+    /* Messages */
+    .message {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .error-message {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #ef5350;
+    }
+
+    .success-message {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #66bb6a;
+    }
+
+    .info-message {
+      background: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #42a5f5;
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      color: #999;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #ddd;
+    }
+
+    /* Password Requirements */
+    .password-requirements {
+      background: #f5f5f5;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .requirement {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.5rem 0;
+    }
+
+    .requirement i {
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+    .requirement.met i {
+      color: #4CAF50;
+    }
+
+    @media (max-width: 600px) {
+      .login-box {
+        padding: 1.5rem;
+      }
+
+      .tab-buttons {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="login-box">
-    <h2>Join enCore</h2>
+  <div class="login-container">
+    <div class="login-box">
+      <h2>enCore</h2>
+      <p>Sharing core memories around the world</p>
 
-    <!-- GOOGLE -->
-    <button class="provider-btn google" id="googleBtn">
-      <i class="fab fa-google"></i> Google
-    </button>
+      <!-- Messages -->
+      <div id="errorMessage" class="message error-message"></div>
+      <div id="successMessage" class="message success-message"></div>
+      <div id="infoMessage" class="message info-message"></div>
 
-    <!-- EMAIL / PASSWORD -->
-    <input id="emailIn" type="email" placeholder="Email" style="width:100%;margin:.7rem 0;padding:.7rem;border-radius:6px;border:none;">
-    <input id="passwordIn" type="password" placeholder="Password" style="width:100%;margin:.7rem 0;padding:.7rem;border-radius:6px;border:none;">
-    <button class="provider-btn email" id="emailBtn">
-      <i class="fas fa-envelope"></i> Sign in with email
-    </button>
-    
-    <button class="provider-btn logout" id="logoutBtn" style="display:none">
-      <i class="fas fa-sign-out-alt"></i> Logout
-    </button>
+      <!-- Tabs -->
+      <div class="tab-buttons">
+        <button class="tab-btn active" onclick="switchTab('login')">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+        <button class="tab-btn" onclick="switchTab('signup')">
+          <i class="fas fa-user-plus"></i> Sign Up
+        </button>
+      </div>
+
+      <!-- LOGIN TAB -->
+      <div id="login-tab" class="tab-content active">
+        <button class="provider-btn google" id="googleBtn">
+          <i class="fab fa-google"></i> Sign in with Google
+        </button>
+
+        <div class="divider">Or</div>
+
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" placeholder="your@email.com">
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••">
+        </div>
+
+        <button class="provider-btn email" id="emailLoginBtn">
+          <i class="fas fa-envelope"></i> Sign in with Email
+        </button>
+      </div>
+
+      <!-- SIGNUP TAB -->
+      <div id="signup-tab" class="tab-content">
+        <button class="provider-btn google" id="googleSignupBtn">
+          <i class="fab fa-google"></i> Sign up with Google
+        </button>
+
+        <div class="divider">Or</div>
+
+        <div class="form-group">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" placeholder="your@email.com">
+        </div>
+
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" placeholder="••••••••">
+        </div>
+
+        <div class="form-group">
+          <label for="signupPasswordConfirm">Confirm Password</label>
+          <input type="password" id="signupPasswordConfirm" placeholder="••••••••">
+        </div>
+
+        <div class="password-requirements">
+          <strong>Password Requirements:</strong>
+          <div class="requirement" id="req-length">
+            <i class="fas fa-circle"></i> At least 8 characters
+          </div>
+          <div class="requirement" id="req-uppercase">
+            <i class="fas fa-circle"></i> One uppercase letter
+          </div>
+          <div class="requirement" id="req-number">
+            <i class="fas fa-circle"></i> One number
+          </div>
+        </div>
+
+        <button class="provider-btn email" id="emailSignupBtn" disabled>
+          <i class="fas fa-user-plus"></i> Create Account
+        </button>
+      </div>
+
+      <!-- LOGOUT (shown when already logged in) -->
+      <button class="provider-btn logout" id="logoutBtn" style="display: none;">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
   </div>
 
-<script type="module" defer>
-  import { signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from
-          "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-  import { auth, db } from "./js/firebase-config.js";
-  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+  <script type="module">
+    import { 
+      signInWithPopup, 
+      GoogleAuthProvider, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword, 
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { auth, db } from "./js/firebase-config.js";
+    import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-  /* ---- Check auth and redirect ---- */
-  async function checkProfileAndRedirect(user) {
-    try {
-      const userDocRef = doc(db, 'users', user.uid);
-      const userDoc = await getDoc(userDocRef);
+    // Tab switching
+    window.switchTab = (tab) => {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       
-      if (!userDoc.exists() || !userDoc.data().profileComplete) {
-        // First time user - redirect to profile setup
+      document.getElementById(tab + '-tab').classList.add('active');
+      event.target.classList.add('active');
+
+      clearMessages();
+    };
+
+    // Message helpers
+    const showError = (msg) => {
+      const el = document.getElementById('errorMessage');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('successMessage').style.display = 'none';
+      document.getElementById('infoMessage').style.display = 'none';
+    };
+
+    const showSuccess = (msg) => {
+      const el = document.getElementById('successMessage');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('errorMessage').style.display = 'none';
+      document.getElementById('infoMessage').style.display = 'none';
+    };
+
+    const showInfo = (msg) => {
+      const el = document.getElementById('infoMessage');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('errorMessage').style.display = 'none';
+      document.getElementById('successMessage').style.display = 'none';
+    };
+
+    const clearMessages = () => {
+      document.getElementById('errorMessage').style.display = 'none';
+      document.getElementById('successMessage').style.display = 'none';
+      document.getElementById('infoMessage').style.display = 'none';
+    };
+
+    // Redirect after successful auth
+    async function checkProfileAndRedirect(user) {
+      try {
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+        
+        if (!userDoc.exists || !userDoc.data().profileComplete) {
+          showSuccess('Account created! Setting up your profile...');
+          setTimeout(() => {
+            window.location.href = 'profile-setup.html';
+          }, 1500);
+        } else {
+          showSuccess('Login successful! Redirecting...');
+          const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+          sessionStorage.removeItem('redirectAfterLogin');
+          setTimeout(() => {
+            window.location.href = redirectUrl || 'profile-page.html';
+          }, 1500);
+        }
+      } catch (error) {
+        console.error('Error checking profile:', error);
         window.location.href = 'profile-setup.html';
-      } else {
-        // Existing user - check if they were trying to access a specific page
-        const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
-        sessionStorage.removeItem('redirectAfterLogin');
-        window.location.href = redirectUrl || 'my-runs.html';
       }
-    } catch (error) {
-      console.error('Error checking profile:', error);
-      // On error, redirect to profile setup to be safe
-      window.location.href = 'profile-setup.html';
     }
-  }
 
-  /* ---- show/hide logout button ---- */
-  function toggleLogout() {
-    const btn = document.getElementById('logoutBtn');
-    btn.style.display = auth.currentUser ? 'block' : 'none';
-  }
-  toggleLogout();
-  auth.onAuthStateChanged(toggleLogout);
+    // Auth state
+    onAuthStateChanged(auth, (user) => {
+      const loginTab = document.getElementById('login-tab');
+      const signupTab = document.getElementById('signup-tab');
+      const logoutBtn = document.getElementById('logoutBtn');
 
-  /* ---- logout click ---- */
-  document.getElementById('logoutBtn').onclick = async () => {
-    await signOut(auth);
-    location.reload();
-  };
+      if (user) {
+        loginTab.style.display = 'none';
+        signupTab.style.display = 'none';
+        logoutBtn.style.display = 'flex';
+      } else {
+        loginTab.style.display = 'block';
+        signupTab.style.display = 'none';
+        logoutBtn.style.display = 'none';
+      }
+    });
 
-  window.addEventListener('DOMContentLoaded', () => {
-    /* ----------  GOOGLE  ---------- */
+    // Logout
+    document.getElementById('logoutBtn').onclick = async () => {
+      await signOut(auth);
+      location.reload();
+    };
+
+    // Password validation for signup
+    const validatePassword = (password) => {
+      const hasLength = password.length >= 8;
+      const hasUppercase = /[A-Z]/.test(password);
+      const hasNumber = /[0-9]/.test(password);
+
+      document.getElementById('req-length').classList.toggle('met', hasLength);
+      document.getElementById('req-uppercase').classList.toggle('met', hasUppercase);
+      document.getElementById('req-number').classList.toggle('met', hasNumber);
+
+      const isValid = hasLength && hasUppercase && hasNumber;
+      document.getElementById('emailSignupBtn').disabled = !isValid;
+
+      return isValid;
+    };
+
+    document.getElementById('signupPassword').addEventListener('input', (e) => {
+      validatePassword(e.target.value);
+    });
+
+    // GOOGLE LOGIN
     document.getElementById('googleBtn').onclick = async () => {
       try {
+        clearMessages();
+        showInfo('Redirecting to Google...');
         const result = await signInWithPopup(auth, new GoogleAuthProvider());
         await checkProfileAndRedirect(result.user);
       } catch (err) {
-        console.error(err.code, err.message);
-        alert(err.code + '\n' + err.message);
+        showError(`Google login failed: ${err.message}`);
       }
     };
 
-    /* ----------  EMAIL/PASS  ---------- */
-    document.getElementById('emailBtn').onclick = async () => {
-      const email = document.getElementById('emailIn').value.trim();
-      const pass = document.getElementById('passwordIn').value.trim();
-      if (!email || !pass) return alert('Fill both fields');
+    // GOOGLE SIGNUP
+    document.getElementById('googleSignupBtn').onclick = document.getElementById('googleBtn').onclick;
+
+    // EMAIL LOGIN
+    document.getElementById('emailLoginBtn').onclick = async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      if (!email || !password) {
+        showError('Please fill in both email and password');
+        return;
+      }
 
       try {
-        let result;
-        try {
-          result = await signInWithEmailAndPassword(auth, email, pass);
-        } catch (err) {
-          if (err.code === 'auth/user-not-found') {
-            result = await createUserWithEmailAndPassword(auth, email, pass);
-          } else {
-            throw err;
-          }
-        }
+        clearMessages();
+        showInfo('Signing in...');
+        const result = await signInWithEmailAndPassword(auth, email, password);
         await checkProfileAndRedirect(result.user);
       } catch (err) {
-        if (err.code === 'auth/wrong-password' || 
-            err.code === 'auth/invalid-login-credentials') {
-          alert('Wrong password – try again');
+        if (err.code === 'auth/user-not-found') {
+          showError('No account found with this email. Try signing up instead.');
+        } else if (err.code === 'auth/wrong-password') {
+          showError('Wrong password. Please try again.');
+        } else if (err.code === 'auth/invalid-email') {
+          showError('Invalid email address.');
         } else {
-          alert(err.code + '\n' + err.message);
+          showError(`Login failed: ${err.message}`);
         }
+        console.error(err);
       }
     };
-  });
-</script>
+
+    // EMAIL SIGNUP
+    document.getElementById('emailSignupBtn').onclick = async () => {
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
+
+      if (!email || !password || !passwordConfirm) {
+        showError('Please fill in all fields');
+        return;
+      }
+
+      if (password !== passwordConfirm) {
+        showError('Passwords do not match');
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        showError('Password does not meet requirements');
+        return;
+      }
+
+      try {
+        clearMessages();
+        showInfo('Creating account...');
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // Create initial user document
+        await setDoc(doc(db, 'users', result.user.uid), {
+          email: email,
+          uid: result.user.uid,
+          createdAt: new Date().toISOString(),
+          profileComplete: false
+        });
+
+        await checkProfileAndRedirect(result.user);
+      } catch (err) {
+        if (err.code === 'auth/email-already-in-use') {
+          showError('An account with this email already exists. Try logging in instead.');
+        } else if (err.code === 'auth/weak-password') {
+          showError('Password is too weak. It must be at least 8 characters.');
+        } else if (err.code === 'auth/invalid-email') {
+          showError('Invalid email address.');
+        } else {
+          showError(`Signup failed: ${err.message}`);
+        }
+        console.error(err);
+      }
+    };
+
+    // Enter key support
+    document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') document.getElementById('emailLoginBtn').click();
+    });
+
+    document.getElementById('signupPasswordConfirm').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') document.getElementById('emailSignupBtn').click();
+    });
+  </script>
 </body>
 </html>
