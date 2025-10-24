@@ -384,3 +384,18 @@ exports.notifySubscriptionOpen = functions.pubsub
     console.log(`Subscription-reminder e-mail sent to ${mails.length} users`);
     return null;
   });
+
+
+  // When a user is deleted in Auth → remove him from every race
+exports.cleanupDeletedUser = functions.auth.user().onDelete(async (user) => {
+  const uid = user.uid;
+  const eventsRef = admin.firestore().collection('events');
+  const snap = await eventsRef.where('going', 'array-contains', uid).get();
+
+  const batch = admin.firestore().batch();
+  snap.docs.forEach(doc => {
+    batch.update(doc.ref, { going: admin.firestore.FieldValue.arrayRemove(uid) });
+  });
+  await batch.commit();
+  console.log(`Removed ${uid} from ${snap.size} races`);
+});
