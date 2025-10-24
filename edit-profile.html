@@ -15,10 +15,46 @@
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    /* change Edit Profile heading color */
+
     .edit-container h2 {
       color: #ff6b35;
     }
+
+    /* Avatar Section */
+    .avatar-section {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid #eee;
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #ff6b35;
+      margin-bottom: 1rem;
+      object-fit: cover;
+    }
+
+    .change-avatar-btn {
+      background: #2196F3;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .change-avatar-btn:hover {
+      background: #1976D2;
+    }
+
     .form-group {
       margin-bottom: 1.5rem;
     }
@@ -98,44 +134,96 @@
       background: #ccc;
     }
 
-    /* ...existing code... */
-    .edit-container .checkbox-group label[for="emailNewEvents"],
-    .edit-container .checkbox-group label[for="emailChatMessages"],
-    .edit-container .checkbox-group label[for="emailNewRunners"],
-    .edit-container .checkbox-group label[for="emailRaceReminders"],
-    .edit-container .checkbox-group label[for="emailSubReminder"] {
-      color: #000; /* make those two labels black */
+    /* Avatar Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      padding: 2rem;
+    }
+
+    .modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 16px;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .modal-close {
+      font-size: 2rem;
+      cursor: pointer;
+      color: #999;
+      background: none;
+      border: none;
+    }
+
+    .avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .avatar-option {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .avatar-option:hover {
+      border-color: #ff6b35;
+      transform: scale(1.1);
+    }
+
+    .avatar-option.selected {
+      border-color: #4CAF50;
+      box-shadow: 0 0 12px rgba(76, 175, 80, 0.6);
+    }
+
+    .save-avatar-btn {
+      width: 100%;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+
+    .save-avatar-btn:hover {
+      background: #45a049;
     }
   </style>
 </head>
 
 <body>
-  <!-- <div class="login-widget" id="authWidget">
-    <img id="userImg" src="" hidden>
-    <span id="userName"></span>
-    <button id="loginOutBtn">Login</button>
-  </div>
-
-  <script type="module">
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-    import { auth } from "./js/firebase-config.js";
-
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        document.getElementById('userImg').src = user.photoURL;
-        document.getElementById('userImg').hidden = false;
-        document.getElementById('userName').textContent = user.displayName?.split(' ')[0];
-        document.getElementById('loginOutBtn').textContent = 'Logout';
-      }
-    });
-
-    document.getElementById('loginOutBtn').onclick = () => 
-      auth.currentUser ? signOut(auth) : location = 'login.html';
-  </script> -->
   <script type="module">
     import { injectLoginWidget } from './js/login-widget.js';
-    injectLoginWidget();   // creates ONE widget at runtime
+    injectLoginWidget();
   </script>
+
   <header id="main-header">
     <h1>enCore</h1>
     <p>Sharing core memories around the world</p>
@@ -143,13 +231,22 @@
     <nav>
       <a href="index.html">Home&nbsp;&nbsp;<i class="fa-solid fa-cloud"></i></a>
       <a href="running.html">Running</a>
-      <a href="my-runs.html">My Runs</a>
+      <a href="profile-page.html">My Profile</a>
     </nav>
   </header>
 
   <main class="content">
     <div class="edit-container">
       <h2>Edit Profile</h2>
+
+      <!-- Avatar Section -->
+      <div class="avatar-section">
+        <img id="profileAvatar" class="profile-avatar" src="" alt="Profile">
+        <br>
+        <button type="button" class="change-avatar-btn" id="changeAvatarBtn">
+          <i class="fa-solid fa-image"></i> Change Avatar
+        </button>
+      </div>
 
       <form id="editForm">
         <div class="form-group">
@@ -184,27 +281,37 @@
             <input type="checkbox" id="emailChatMessages" name="emailChatMessages">
             <label for="emailChatMessages">Chat messages</label>
           </div>
-        </div>
 
-        <div class="checkbox-group">
-          <input type="checkbox" id="emailNewEvents" name="emailNewEvents" checked>
-          <label for="emailNewEvents">E-mail me when new races are posted</label>
-        </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="emailNewEvents" name="emailNewEvents" checked>
+            <label for="emailNewEvents">E-mail me when new races are posted</label>
+          </div>
 
-        <div class="checkbox-group">
-          <input type="checkbox" id="emailSubReminder" name="emailSubReminder" checked>
-          <label for="emailSubReminder">E-mail me before subscription deadlines</label>
+          <div class="checkbox-group">
+            <input type="checkbox" id="emailSubReminder" name="emailSubReminder" checked>
+            <label for="emailSubReminder">E-mail me before subscription deadlines</label>
+          </div>
         </div>
 
         <div class="button-group">
-          <button type="button" class="btn btn-cancel" onclick="history.back()">Cancel</button>
+          <button type="button" class="btn btn-cancel" onclick="window.location.href='profile-page.html'">Cancel</button>
           <button type="submit" class="btn btn-save">Save Changes</button>
         </div>
-
       </form>
     </div>
   </main>
 
+  <!-- Avatar Picker Modal -->
+  <div id="avatarModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Choose Your Avatar</h2>
+        <button type="button" class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <div class="avatar-grid" id="avatarGrid"></div>
+      <button type="button" class="save-avatar-btn" id="saveAvatarBtn">Save Avatar</button>
+    </div>
+  </div>
 
   <script type="module">
     import { auth, db } from './js/firebase-config.js';
@@ -212,7 +319,9 @@
     import { doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
     let currentUser = null;
+    let selectedAvatar = null;
 
+    // Load profile on auth change
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = 'login.html';
@@ -225,15 +334,92 @@
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       if (userDoc.exists()) {
         const profile = userDoc.data();
+        
+        // Set avatar
+        const avatar = profile.photoURL || `https://robohash.org/${user.uid}?size=120x120`;
+        document.getElementById('profileAvatar').src = avatar;
+        
+        // Set form fields
         document.getElementById('displayName').value = profile.displayName || '';
         document.getElementById('bio').value = profile.bio || '';
         document.getElementById('location').value = profile.location || '';
         document.getElementById('emailRaceReminders').checked = profile.notifications?.raceReminders || false;
         document.getElementById('emailNewRunners').checked = profile.notifications?.newRunners || false;
         document.getElementById('emailChatMessages').checked = profile.notifications?.chatMessages || false;
+        document.getElementById('emailNewEvents').checked = profile.notifications?.newEvents !== false;
+        document.getElementById('emailSubReminder').checked = profile.notifications?.subscriptionReminder !== false;
+      }
+
+      setupAvatarPicker();
+    });
+
+    // Setup avatar picker
+    function setupAvatarPicker() {
+      const avatarStyles = [
+        'adventurer', 'avataaars', 'bottts', 'croodles', 'fun-emoji',
+        'lorelei', 'micah', 'miniavs', 'open-peeps', 'personas',
+        'pixel-art', 'rings', 'shapes', 'thumbs'
+      ];
+
+      const grid = document.getElementById('avatarGrid');
+      grid.innerHTML = '';
+
+      avatarStyles.forEach((style) => {
+        const img = document.createElement('img');
+        img.src = `https://api.dicebear.com/7.x/${style}/svg?seed=${currentUser.uid}`;
+        img.className = 'avatar-option';
+        img.onclick = () => selectAvatar(img, img.src);
+        grid.appendChild(img);
+      });
+    }
+
+    // Select avatar
+    function selectAvatar(element, url) {
+      document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedAvatar = url;
+    }
+
+    // Open modal
+    document.getElementById('changeAvatarBtn').addEventListener('click', () => {
+      document.getElementById('avatarModal').style.display = 'block';
+    });
+
+    // Close modal
+    document.getElementById('closeModal').addEventListener('click', () => {
+      document.getElementById('avatarModal').style.display = 'none';
+    });
+
+    // Save avatar
+    document.getElementById('saveAvatarBtn').addEventListener('click', async () => {
+      if (!selectedAvatar) {
+        alert('Please select an avatar');
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          photoURL: selectedAvatar
+        });
+
+        document.getElementById('profileAvatar').src = selectedAvatar;
+        document.getElementById('avatarModal').style.display = 'none';
+        alert('Avatar updated!');
+      } catch (error) {
+        console.error('Error saving avatar:', error);
+        alert('Error saving avatar');
       }
     });
 
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('avatarModal');
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // Save form
     document.getElementById('editForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -254,7 +440,7 @@
       try {
         await updateDoc(doc(db, 'users', currentUser.uid), updates);
         alert('Profile updated successfully!');
-        window.location.href = 'my-runs.html';
+        window.location.href = 'profile-page.html';
       } catch (error) {
         console.error('Error updating profile:', error);
         alert('Error updating profile. Please try again.');
