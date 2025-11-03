@@ -11,6 +11,7 @@ Creating a website for me has been an technical challange for to learn to code a
 - [ ] Optimize login
 - [ ] Portfolio section
 - [ ] Blog functionality
+- [ ] Bigger avatar collection
 - [ ] Strava connection
 - [ ] Automatic emails
 - [ ] AI tool to detect half marathon runs
