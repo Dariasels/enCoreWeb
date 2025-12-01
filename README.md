@@ -1,4 +1,4 @@
-# My website project: technical and personal challange
+# My website project: technical and personal challenge
 
 GOAL:
 The core idea is to run half marathons around the world with friends, and people I meet on my trips. Working towards the same goals and seeing eachother with a common purpose stregnthens relationships. This idea quickly expanded to hiking, backpacking trips, as well as diving and skiing trips. This website is a place for everyone to share trips ideas, tips, and stay updated.
