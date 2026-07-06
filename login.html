@@ -275,12 +275,15 @@
       <div id="successMessage" class="message success-message"></div>
       <div id="infoMessage" class="message info-message"></div>
 
+      <!-- Everything below is hidden when already logged in -->
+      <div id="authForms">
+
       <!-- Tabs -->
       <div class="tab-buttons">
-        <button class="tab-btn active" onclick="switchTab('login')">
+        <button class="tab-btn active" onclick="switchTab('login', this)">
           <i class="fas fa-sign-in-alt"></i> Login
         </button>
-        <button class="tab-btn" onclick="switchTab('signup')">
+        <button class="tab-btn" onclick="switchTab('signup', this)">
           <i class="fas fa-user-plus"></i> Sign Up
         </button>
       </div>
@@ -306,6 +309,10 @@
         <button class="provider-btn email" id="emailLoginBtn">
           <i class="fas fa-envelope"></i> Sign in with Email
         </button>
+
+        <p style="margin-top: 1rem;">
+          <a href="#" id="forgotPasswordLink" style="color: #ff6b35;">Forgot your password?</a>
+        </p>
       </div>
 
       <!-- SIGNUP TAB -->
@@ -349,32 +356,41 @@
         </button>
       </div>
 
-      <!-- LOGOUT (shown when already logged in) -->
-      <button class="provider-btn logout" id="logoutBtn" style="display: none;">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </button>
+      </div><!-- /#authForms -->
+
+      <!-- Shown instead when already logged in -->
+      <div id="loggedInBox" style="display: none;">
+        <p id="loggedInAs" style="margin-bottom: 1rem;"></p>
+        <a href="index.html" class="provider-btn email" style="text-decoration: none;">
+          <i class="fas fa-house"></i> Back to the website
+        </a>
+        <button class="provider-btn logout" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
     </div>
   </div>
 
   <script type="module">
-    import { 
-      signInWithPopup, 
-      GoogleAuthProvider, 
-      createUserWithEmailAndPassword, 
-      signInWithEmailAndPassword, 
+    import {
+      signInWithPopup,
+      GoogleAuthProvider,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      sendPasswordResetEmail,
       signOut,
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
     import { auth, db } from "./js/firebase-config.js";
-    import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
     // Tab switching
-    window.switchTab = (tab) => {
+    window.switchTab = (tab, btn) => {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      
+
       document.getElementById(tab + '-tab').classList.add('active');
-      event.target.classList.add('active');
+      btn.classList.add('active');
 
       clearMessages();
     };
@@ -411,44 +427,49 @@
     };
 
     // Redirect after successful auth
+    let redirecting = false;
     async function checkProfileAndRedirect(user) {
+      redirecting = true;
+      let profileComplete = false;
       try {
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
-        
-        if (!userDoc.exists || !userDoc.data().profileComplete) {
-          showSuccess('Account created! Setting up your profile...');
-          setTimeout(() => {
-            window.location.href = 'profile-setup.html';
-          }, 1500);
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+        if (!userDoc.exists()) {
+          // First login with Google: create the user document now
+          await setDoc(doc(db, 'users', user.uid), {
+            uid: user.uid,
+            email: user.email || '',
+            displayName: user.displayName || '',
+            photoURL: user.photoURL || '',
+            createdAt: new Date().toISOString(),
+            profileComplete: false
+          });
         } else {
-          showSuccess('Login successful! Redirecting...');
-          const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
-          sessionStorage.removeItem('redirectAfterLogin');
-          setTimeout(() => {
-            window.location.href = redirectUrl || 'profile-page.html';
-          }, 1500);
+          profileComplete = !!userDoc.data().profileComplete;
         }
       } catch (error) {
         console.error('Error checking profile:', error);
-        window.location.href = 'profile-setup.html';
+      }
+
+      if (!profileComplete) {
+        showSuccess('Welcome! Setting up your profile...');
+        setTimeout(() => { window.location.href = 'profile-setup.html'; }, 1000);
+      } else {
+        showSuccess('Login successful! Redirecting...');
+        const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+        sessionStorage.removeItem('redirectAfterLogin');
+        setTimeout(() => { window.location.href = redirectUrl || 'index.html'; }, 1000);
       }
     }
 
-    // Auth state
+    // Auth state: show forms when logged out, account box when logged in
     onAuthStateChanged(auth, (user) => {
-      const loginTab = document.getElementById('login-tab');
-      const signupTab = document.getElementById('signup-tab');
-      const logoutBtn = document.getElementById('logoutBtn');
-
+      if (redirecting) return; // don't flash the account box mid-redirect
+      document.getElementById('authForms').style.display = user ? 'none' : 'block';
+      document.getElementById('loggedInBox').style.display = user ? 'block' : 'none';
       if (user) {
-        loginTab.style.display = 'none';
-        signupTab.style.display = 'none';
-        logoutBtn.style.display = 'flex';
-      } else {
-        loginTab.style.display = 'block';
-        signupTab.style.display = 'none';
-        logoutBtn.style.display = 'none';
+        document.getElementById('loggedInAs').textContent =
+          `You are logged in as ${user.displayName || user.email}.`;
       }
     });
 
@@ -568,6 +589,22 @@
           showError(`Signup failed: ${err.message}`);
         }
         console.error(err);
+      }
+    };
+
+    // FORGOT PASSWORD
+    document.getElementById('forgotPasswordLink').onclick = async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      if (!email) {
+        showError('Fill in your email above first, then click "Forgot your password?" again.');
+        return;
+      }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showSuccess(`Password reset email sent to ${email}. Check your inbox!`);
+      } catch (err) {
+        showError(`Could not send reset email: ${err.message}`);
       }
     };
 

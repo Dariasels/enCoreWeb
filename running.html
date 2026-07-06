@@ -12,21 +12,13 @@
     .season-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15rem;
+      gap: 3rem;
       margin: 2rem 0;
     }
 
     .season-column {
       display: flex;
       flex-direction: column;
-    }
-
-    .season-column h2 {
-      margin: 0 0 8.6rem 0;
-    }
-
-    .season-column:nth-child(2) h2 {
-      margin-top: 0rem;
     }
 
     .season-column h2 {
@@ -216,9 +208,17 @@
       }
     }
 
-    <base target="_blank">
+    .race-card-past {
+      opacity: 0.75;
+      filter: saturate(0.6);
+    }
+
+    .going-more {
+      margin-left: 0.5rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
   </style>
-<base target="_blank">
 </head>
 
 <body>
@@ -298,155 +298,71 @@
   <!-- Load race data and manager -->
   <script src="races-data.js"></script>
   <script src="race-manager.js"></script>
-  
+
   <script>
+    // Globe: rendered after race-manager has built the cards (same
+    // DOMContentLoaded event, registered later so it runs after).
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        if (window.raceManager) {
-          const allRaces = [
-            ...window.raceManager.races.confirmed,
-            ...window.raceManager.races.radar,
-            ...window.raceManager.races.past
-          ];
+      const pins = window.raceManager.globePins();
 
-          const pins = allRaces.map(race => ({
-            lat: race.location.lat,
-            lng: race.location.lng,
-            label: race.name.split(',')[0],
-            link: `#${race.id}`,
-            size: race.status === 'confirmed' ? 0.1 : 0.05,
-            color: race.status === 'past' ? '#888' : 
-                   race.status === 'confirmed' ? '#ff6b35' : '#ffa500'
-          }));
-
-          // Initialize globe with proper sizing
-          const globeContainer = document.getElementById('globeViz');
-          const globe = Globe()
+      // Initialize globe with proper sizing
+      const globeContainer = document.getElementById('globeViz');
+      const globe = Globe()
             .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
             .pointsData(pins)
             .pointLat('lat')
-            .pointLng('lng')
-            .pointAltitude('size')
-            .pointColor('color')
-            .pointLabel('label')
-            .width(globeContainer.clientWidth)
-            .height(globeContainer.clientHeight)
-            .onPointClick(pin => {
-              document.getElementById('globe-info').innerText = `Selected: ${pin.label}`;
-              const target = document.querySelector(pin.link);
-              if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }
-            });
+        .pointLng('lng')
+        .pointAltitude('size')
+        .pointColor('color')
+        .pointLabel('label')
+        .width(globeContainer.clientWidth)
+        .height(globeContainer.clientHeight)
+        .onPointClick(pin => {
+          document.getElementById('globe-info').innerText = `Selected: ${pin.label}`;
+          const target = document.querySelector(pin.link);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
 
-          globe(globeContainer);
-          window.globe = globe;
+      globe(globeContainer);
+      window.globe = globe;
 
-          globe.controls().autoRotate = true;
-          globe.controls().autoRotateSpeed = 1.5;
+      globe.controls().autoRotate = true;
+      globe.controls().autoRotateSpeed = 1.5;
 
-          globe.controls().addEventListener('start', () => {
+      globe.controls().addEventListener('start', () => {
+        globe.controls().autoRotate = false;
+      });
+
+      // Only spin/react while the globe is on screen
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            globe.controls().autoRotate = true;
+            globe.controls().enabled = true;
+          } else {
             globe.controls().autoRotate = false;
-          });
+            globe.controls().enabled = false;
+          }
+        });
+      }, { threshold: 0.1 });
 
-          // Intersection Observer
-          const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-              if (entry.isIntersecting) {
-                globe.controls().autoRotate = true;
-                globe.controls().enabled = true;
-              } else {
-                globe.controls().autoRotate = false;
-                globe.controls().enabled = false;
-              }
-            });
-          }, { threshold: 0.1 });
+      observer.observe(globeContainer);
 
-          observer.observe(globeContainer);
-
-          // Handle window resize
-          window.addEventListener('resize', () => {
-            if (globeContainer.clientWidth > 0) {
-              globe.width(globeContainer.clientWidth).height(globeContainer.clientHeight);
-            }
-          });
+      // Handle window resize
+      window.addEventListener('resize', () => {
+        if (globeContainer.clientWidth > 0) {
+          globe.width(globeContainer.clientWidth).height(globeContainer.clientHeight);
         }
-      }, 100);
+      });
     });
   </script>
 
+  <!-- Live likes + who's going (shared via Firestore) -->
   <script type="module">
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-    import { db, auth } from './js/firebase-config.js';
-    import { doc, onSnapshot, getDoc }
-    from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-
-    window.auth = auth;
-
-    onAuthStateChanged(auth, user => {
-      if (window.raceManager) {
-        window.raceManager.renderRacesBySeason();
-        
-        if (user) {
-          const allRaces = [
-            ...window.raceManager.races.confirmed,
-            ...window.raceManager.races.radar,
-            ...window.raceManager.races.past
-          ];
-
-          allRaces.forEach(race => {
-            const avatarDiv = document.getElementById(`going-${race.id}`);
-            if (avatarDiv) {
-              const raceDocRef = doc(db, 'events', race.id);
-              
-              onSnapshot(raceDocRef, async (snap) => {
-                if (snap.exists()) {
-                  const data = snap.data();
-                  const going = data?.going || [];
-                  
-                  if (going.length > 0) {
-                    let avatarHTML = '';
-                    const displayLimit = 5;
-                    
-                    for (let i = 0; i < Math.min(going.length, displayLimit); i++) {
-                      const uid = going[i];
-                      let displayName = 'Runner';
-                      
-                      try {
-                        const userDocRef = doc(db, 'users', uid);
-                        const userDoc = await getDoc(userDocRef);
-                        if (userDoc.exists()) {
-                          displayName = userDoc.data().displayName || userDoc.data().name || 'Runner';
-                        } else if (uid === user.uid) {
-                          displayName = user.displayName?.split(' ')[0] || 'You';
-                        }
-                      } catch (e) {
-                        console.log('Could not fetch name for', uid);
-                      }
-                      
-                      avatarHTML += `<img src="https://robohash.org/${uid}?size=32x32" 
-                           title="${displayName}" 
-                           onclick="window.location.href='profile-page.html?uid=${uid}'"
-                           style="cursor: pointer; transition: transform 0.2s;" />`;
-                    }
-                    
-                    if (going.length > displayLimit) {
-                      avatarHTML += `<span style="margin-left: 0.5rem; color: #666; font-size: 0.9rem;">+${going.length - displayLimit} more</span>`;
-                    }
-                    
-                    avatarDiv.innerHTML = avatarHTML;
-                  } else {
-                    avatarDiv.innerHTML = '';
-                  }
-                }
-              }, (error) => {
-                console.log(`Race ${race.id} not yet in Firestore`);
-              });
-            }
-          });
-        }
-      }
-    });
+    import { initRaceSocial } from './js/race-social.js';
+    initRaceSocial();
   </script>
 </body>
 </html>
