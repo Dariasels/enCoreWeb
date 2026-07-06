@@ -523,7 +523,8 @@
           const raceInfo = allRaces.find(r => r.id === doc.id);
           
           if (raceInfo) {
-            myRaces.push({ ...raceInfo, ...eventData });
+            // catalog info (races-data.js) wins over the Firestore copy
+            myRaces.push({ ...eventData, ...raceInfo });
           }
         });
 
@@ -547,9 +548,10 @@
       });
       document.getElementById('statConnections').textContent = uniqueRunners.size;
 
-      const userLikes = localStorage.getItem(`userLikes_${currentUser.uid}`);
-      const likedCount = userLikes ? JSON.parse(userLikes).length : 0;
-      document.getElementById('statLiked').textContent = likedCount;
+      // Likes live in Firestore now (shared with everyone)
+      getDocs(query(collection(db, 'events'), where('likes', 'array-contains', currentUser.uid)))
+        .then(snap => { document.getElementById('statLiked').textContent = snap.size; })
+        .catch(err => console.error('Error counting likes:', err));
     }
 
     function displayRaces() {
@@ -572,7 +574,7 @@
             <div class="race-card-title">${race.name}</div>
             <div class="race-card-date">
               <i class="fa-regular fa-calendar"></i>
-              ${race.date || 'Date TBD'}
+              ${raceUtils.formatDate(race)}
             </div>
             <a href="race-details.html?id=${race.id}" class="race-card-btn">
               View Details

@@ -50,7 +50,7 @@
       <a href="hiking.html">Hiking</a>
       <a href="backpacking.html">Backpacking</a>
       <a href="diving.html">Diving</a>
-      <a href="skiing.html">Skiing</a>
+      <a href="ski.html">Skiing</a>
       <a href="food.html">Food</a>
       <a href="suggestions.html">Suggestions</a>
       <a href="inspiration.html">Inspiration</a>
@@ -68,16 +68,12 @@
     <section id="ski-radar"><h3>On the Radar</h3></section>
   </main>
 
-  <!-- pull shared logic -->
-  <script src="js/firebase-config.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/ski-manager.js"></script>
-
+  <!-- live ski events from Firestore -->
   <script type="module">
-  import { EventRenderer } from './js/event-renderer.js';
-  new EventRenderer('confirmed','confirmed','skiing');
-  new EventRenderer('radar',   'radar',   'skiing');
-  new EventRenderer('past',    'past',    'skiing');
-</script>
+    import { EventRenderer } from './js/event-renderer.js';
+    new EventRenderer('ski-confirmed', 'confirmed', 'skiing');
+    new EventRenderer('ski-radar',     'radar',     'skiing');
+    new EventRenderer('ski-past',      'past',      'skiing');
+  </script>
 </body>
 </html>

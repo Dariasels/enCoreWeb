@@ -9,7 +9,7 @@ export function injectLoginWidget() {
   widget.className = 'login-widget';
   widget.innerHTML = `
     <a href="profile-page.html" id="profileLink" style="display:none;">
-      <img id="userImg" src="" style="width:32px;height:32px;border-radius:50%;cursor:pointer;" title="My Profile">
+      <img id="userImg" src="" alt="My profile" style="width:32px;height:32px;border-radius:50%;cursor:pointer;" title="My Profile">
     </a>
     <span id="userName"></span>
     <button id="loginOutBtn">Login</button>
@@ -23,9 +23,11 @@ export function injectLoginWidget() {
 
   onAuthStateChanged(auth, user => {
     if (user) {
-      img.src = user.photoURL;
+      // Email accounts have no photo/display name — fall back gracefully
+      img.src = user.photoURL || `https://robohash.org/${encodeURIComponent(user.uid)}?size=32x32`;
+      img.onerror = () => { img.src = `https://robohash.org/${encodeURIComponent(user.uid)}?size=32x32`; };
       profileLink.style.display = 'block';
-      name.textContent = user.displayName?.split(' ')[0];
+      name.textContent = user.displayName?.split(' ')[0] || user.email?.split('@')[0] || 'Runner';
       btn.textContent = 'Logout';
     } else {
       profileLink.style.display = 'none';
@@ -34,5 +36,13 @@ export function injectLoginWidget() {
     }
   });
 
-  btn.onclick = () => auth.currentUser ? signOut(auth) : location = 'login.html';
+  btn.onclick = () => {
+    if (auth.currentUser) {
+      signOut(auth);
+    } else {
+      // Come back to this page after logging in
+      sessionStorage.setItem('redirectAfterLogin', window.location.href);
+      window.location.href = 'login.html';
+    }
+  };
 }
